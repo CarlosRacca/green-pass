@@ -1,0 +1,119 @@
+/* src/styles.css */
+
+body {
+    font-family: 'Helvetica Neue Light', sans-serif;
+    background-color: #F1F2F3; /* Color de fondo general */
+    color: #001E26; /* Color de texto principal */
+  }
+  
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+  }
+  
+  .card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .card-title {
+    font-size: 1.7rem;
+    font-family: 'Helvetica Neue Condensed Bold', sans-serif; /* Tipografía para los títulos */
+    color: #001E26; /* Mantener el texto en negro */
+  }
+  
+  .card-text {
+    font-size: 1.1rem;
+    color: #001E26; /* Color negro para el texto dentro de las tarjetas */
+  }
+  
+  .btn-primary {
+    background-color: #006742; /* Color verde oscuro para botones */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-transform: uppercase;
+    font-weight: bold;
+    transition: background-color 0.3s;
+  }
+  
+  .btn-primary:hover {
+    background-color: #008E58; /* Color verde más claro al pasar el mouse */
+  }
+  
+  .package-detail {
+    background-color: #FFFFFF; /* Fondo blanco para la sección de detalles */
+    border: 2px solid #008E58; /* Borde verde para destacar */
+    border-radius: 10px;
+    padding: 30px; /* Aumentar padding para más espacio interno */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    margin-top: 20px;
+    /* Se elimina la transición de escalado */
+  }
+  
+  .package-detail h2 {
+    color: #D27203; /* Color naranja para el título de detalles */
+  }
+  
+  .package-detail h4 {
+    color: #001E26; /* Color negro para subtítulos */
+  }
+  
+  .package-detail p {
+    line-height: 1.6; /* Espaciado entre líneas */
+  }
+  
+  .package-detail ul {
+    list-style-type: square; /* Cambiar a punteo cuadrado */
+    padding-left: 20px; /* Espacio a la izquierda para la lista */
+  }
+  
+  .package-detail li {
+    margin-bottom: 10px; /* Espacio entre los ítems de la lista */
+    color: #008E58; /* Color verde para los ítems */
+    font-weight: bold; /* Hacer el texto en negrita */
+  }
+  
+  .package-detail pre {
+    background-color: #F5BA67; /* Color amarillo para el itinerario */
+    padding: 10px;
+    border-radius: 5px;
+    color: #001E26; /* Texto en negro */
+  }
+  
+  .back-button {
+    margin-top: 20px;
+    background-color: #008E58; /* Color verde para el botón de volver */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .back-button:hover {
+    background-color: #006742; /* Color más oscuro al pasar el mouse */
+  }
+  
+  /* Estilos para el botón de WhatsApp */
+  .whatsapp-button {
+    background-color: #25D366; /* Color verde de WhatsApp */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    margin-top: 20px;
+    display: inline-block; /* Para que se vea como un botón */
+    text-align: center; /* Centrar el texto dentro del botón */
+    transition: background-color 0.3s;
+  }
+  
+  .whatsapp-button:hover {
+    background-color: #128C7E; /* Color más oscuro de WhatsApp al pasar el mouse */
+  }

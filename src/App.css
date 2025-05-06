@@ -2,10 +2,33 @@
   text-align: center;
 }
 
+header {
+  background: linear-gradient(to bottom right, #007bff, #0056b3);
+}
+
+
+header {  background: linear-gradient(to bottom right, #001E26); /* Reemplaza con tus colores */}
+
 .App-logo {
   height: 40vmin;
   pointer-events: none;
 }
+
+.card {
+  display: flex;
+  flex-direction: column; /* Esto permite que los elementos dentro de la tarjeta se apilen verticalmente */
+}
+
+.card-img-top {
+  height: 200px; /* Ajusta la altura de las imágenes según tu necesidad */
+  object-fit: cover; /* Esto asegura que la imagen se recorte y mantenga su aspecto */
+}
+
+.card-body {
+  flex-grow: 1; /* Esto permite que el cuerpo de la tarjeta ocupe el espacio restante */
+}
+
+.btn-primary {  background-color: #006742; /* Cambia por el color de tu marca */}
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
