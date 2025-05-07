@@ -2,6 +2,8 @@
   text-align: center;
 }
 
+
+
 header {
   background: linear-gradient(to bottom right, #007bff, #0056b3);
 }
@@ -58,4 +60,49 @@ header {  background: linear-gradient(to bottom right, #001E26); /* Reemplaza co
   to {
     transform: rotate(360deg);
   }
+}
+
+footer {
+  background-color: #006742; /* Verde oscuro */
+}
+
+footer h3,
+footer h4 {
+  margin-bottom: 1rem;
+  text-align: center; /* Centrar títulos */
+}
+
+footer p {
+  margin: 0.2rem 0; /* Ajuste de margen para mayor proximidad */
+}
+
+.modal-content {
+  border-radius: 10px; /* Bordes redondeados */
+}
+
+.modal-header {
+  background-color: #006742; /* Color de fondo del encabezado del modal */
+  color: white; /* Color del texto del encabezado */
+}
+
+.modal-header .btn-close {
+  color: white; /* Color del botón de cierre */
+}
+
+.modal-body {
+  max-height: 400px; /* Establecer altura máxima para el cuerpo del modal */
+  overflow-y: auto; /* Desplazamiento vertical si el contenido es demasiado grande */
+}
+
+.modal-body h6 {
+  margin-top: 1rem; /* Espaciado para subtítulos */
+  font-weight: bold;
+}
+
+.form-label {
+  font-size: 0.9rem; /* Tamaño de letra más pequeño en el formulario */
+}
+
+.form-control {
+  font-size: 0.9rem; /* Tamaño de letra más pequeño en el formulario */
 }
