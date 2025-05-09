@@ -9,7 +9,7 @@ node_modules/
 # Cache y logs
 .npm
 .cache/
-*.log
+*.log 
 
 # .env y otros archivos sensibles
 .env
