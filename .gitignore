@@ -1,12 +1,18 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# dependencies
-/backend/node_modules
-/.pnp
-.pnp.js
 
-# dependencies
-/frontend/node_modules
+
+# Ignorar todos los node_modules
+node_modules/
+**/node_modules/
+
+# Cache y logs
+.npm
+.cache/
+*.log
+
+# .env y otros archivos sensibles
+.env
 /.pnp
 .pnp.js
 
