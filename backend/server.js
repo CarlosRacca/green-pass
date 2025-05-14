@@ -33,6 +33,10 @@ app.get('/api/test-db', async (req, res) => {
   }
 });
 
+app.get('/api/ping', (req, res) => {
+  res.status(200).json({ message: 'pong!' });
+});
+
 // Usar las rutas del formulario de contacto
 app.use('/api/contact', contactRoutes);
 
