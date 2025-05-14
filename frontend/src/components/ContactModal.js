@@ -19,7 +19,7 @@ const ContactModal = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch('http://localhost:5001/api/contact', {
+      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/contact`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
