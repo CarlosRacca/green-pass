@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { paquetes } from "../data/paquetes.js";
 import { FaCheckCircle } from "react-icons/fa";
 import AdminContacts from "./AdminContacts.js";
@@ -8,6 +8,9 @@ import AdminConsultas from "./AdminConsultas.js";
 const PackageDetail = () => {
   const { packageId } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const isAdminRoute = location.pathname === "/admin";
+
   const [mostrarPrecio, setMostrarPrecio] = useState(false);
   const [error, setError] = useState("");
   const [activeTab, setActiveTab] = useState("detalle");
@@ -30,22 +33,26 @@ const PackageDetail = () => {
     }
   };
 
-  const renderTabs = () => (
-    <div className="bg-light py-3 mb-4 d-flex justify-content-center gap-4 border rounded">
-      <button
-        className={`btn ${activeTab === "admin" ? "btn-primary" : "btn-outline-primary"}`}
-        onClick={() => setActiveTab("admin")}
-      >
-        Ver contactos
-      </button>
-      <button
-        className={`btn ${activeTab === "consultas" ? "btn-primary" : "btn-outline-primary"}`}
-        onClick={() => setActiveTab("consultas")}
-      >
-        Ver consultas
-      </button>
-    </div>
-  );
+  const renderTabs = () => {
+    if (!isAdminRoute) return null;
+
+    return (
+      <div className="bg-light py-3 mb-4 d-flex justify-content-center gap-4 border rounded">
+        <button
+          className={`btn ${activeTab === "admin" ? "btn-primary" : "btn-outline-primary"} focus-outline-none`}
+          onClick={() => setActiveTab("admin")}
+        >
+          Ver contactos
+        </button>
+        <button
+          className={`btn ${activeTab === "consultas" ? "btn-primary" : "btn-outline-primary"} focus-outline-none`}
+          onClick={() => setActiveTab("consultas")}
+        >
+          Ver consultas
+        </button>
+      </div>
+    );
+  };
 
   if (activeTab === "admin") {
     return (
