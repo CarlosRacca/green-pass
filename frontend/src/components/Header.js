@@ -1,38 +1,38 @@
 import React from "react";
-import { FaWhatsapp } from "react-icons/fa";
 import logo from "../assets/GP VERDE Y BLANCO.png";
-import llao from "../assets/img/llao llao golf.jpg"
-import chapelco2 from "../assets/img/chapelco 2.jpg";
-import houseTerron from "../assets/img/House terron.jpeg";
+import { FaWhatsapp } from "react-icons/fa";
 
 function Header() {
   return (
-    <header className="bg-primary text-white text-center py-5">
-      <img src={logo} alt="Logo de Green Pass" className="img-fluid" style={{ maxWidth: "200px" }} />
-      <div id="carouselExample" className="carousel slide" data-bs-ride="carousel">
-        <div className="carousel-inner">
-          <div className="carousel-item active">
-            <img src={llao} className="d-block w-100" alt="Imagen de fondo" />
-          </div>
-          <div className="carousel-item">
-            <img src={chapelco2} className="d-block w-100" alt="Imagen de fondo" />
-          </div>
-          <div className="carousel-item">
-            <img src={houseTerron} className="d-block w-100" alt="Imagen de fondo" />
-          </div>
-        </div>
-        <button className="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-          <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-          <span className="visually-hidden">Previous</span>
-        </button>
-        <button className="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-          <span className="carousel-control-next-icon" aria-hidden="true"></span>
-          <span className="visually-hidden">Next</span>
-        </button>
+    <header
+      className="text-white py-5"
+      style={{
+        backgroundImage: "linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0,0,0,0.9)), url('/img/bg-golf.jpg')",
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        backgroundRepeat: "no-repeat",
+      }}
+    >
+      <div className="container d-flex flex-column align-items-center text-center animate__animated animate__fadeInDown">
+        <img
+          src={logo}
+          alt="Logo de Green Pass"
+          className="img-fluid mb-4"
+          style={{ maxWidth: "200px" }}
+        />
+        <h1 className="display-5 fw-bold mb-3">
+          ¡Viví el golf como nunca antes!
+        </h1>
+        <p className="text-light fs-5 mb-4" style={{ maxWidth: "700px" }}>
+          Sumate a una experiencia exclusiva de golf, relax y naturaleza en los destinos más increíbles de Argentina.
+        </p>
+        <a
+          href="https://wa.me/1133681576"
+          className="btn btn-success px-4 py-2 d-flex align-items-center gap-2"
+        >
+          <FaWhatsapp size={18} /> Quiero más info ahora
+        </a>
       </div>
-      <a href="https://wa.me/1133681576" className="btn btn-success mt-3">
-        <FaWhatsapp /> Contáctanos por WhatsApp
-      </a>
     </header>
   );
 }

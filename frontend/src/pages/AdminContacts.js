@@ -1,56 +1,38 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ContactsTable from '../components/ContactsTable.jsx';
 
 const AdminContacts = () => {
-  const [password, setPassword] = useState('');
   const [contacts, setContacts] = useState([]);
-  const [autorizado, setAutorizado] = useState(false);
   const [error, setError] = useState('');
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError('');
-
-    try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/contact/admin?password=${password}`);
-      const data = await res.json();
-
-      if (data.success) {
-        setContacts(data.data);
-        setAutorizado(true);
-      } else {
-        setError('Contraseña incorrecta');
+  useEffect(() => {
+    const fetchContacts = async () => {
+      try {
+        const res = await fetch(`${process.env.REACT_APP_API_URL}/api/contact/admin?password=supersecreto123`);
+        const data = await res.json();
+        if (data.success) {
+          setContacts(data.data);
+        } else {
+          setError('Error al cargar los contactos.');
+        }
+      } catch (err) {
+        setError('Error al conectar con el servidor');
       }
-    } catch (err) {
-      setError('Error al conectar con el servidor');
-    }
-  };
+    };
+
+    fetchContacts();
+  }, []);
 
   return (
-    <div className="container py-4">
-      {!autorizado ? (
-        <form onSubmit={handleSubmit} className="text-center">
-          <h3>Área privada</h3>
-          <p>Ingrese la contraseña para acceder a los contactos:</p>
-          <input
-            type="password"
-            className="form-control w-50 mx-auto"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button className="btn btn-primary mt-3">Acceder</button>
-          {error && <div className="alert alert-danger mt-3">{error}</div>}
-        </form>
+    <div className="container">
+      <h3 className="mb-4">Contactos registrados</h3>
+      {error ? (
+        <div className="alert alert-danger">{error}</div>
       ) : (
-        <>
-          <h3 className="mb-4">Contactos registrados</h3>
-          <ContactsTable data={contacts} />
-        </>
+        <ContactsTable data={contacts} />
       )}
     </div>
   );
 };
 
 export default AdminContacts;
-

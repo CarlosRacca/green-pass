@@ -1,12 +1,88 @@
-import React from "react";
+import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { paquetes } from "../data/paquetes.js";
+import { FaCheckCircle } from "react-icons/fa";
+import AdminContacts from "./AdminContacts.js";
+import AdminConsultas from "./AdminConsultas.js";
 
-function PackageDetail() {
+const PackageDetail = () => {
   const { packageId } = useParams();
   const navigate = useNavigate();
+  const [mostrarPrecio, setMostrarPrecio] = useState(false);
+  const [error, setError] = useState("");
+  const [activeTab, setActiveTab] = useState("detalle");
 
-  const renderDetalle = (data) => (
+  const paquete = paquetes.find((p) => p.id === packageId);
+
+  const handlePrecio = async () => {
+    setMostrarPrecio(true);
+    try {
+      await fetch(`${process.env.REACT_APP_API_URL}/api/notify/notify-package-view`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ paquete: paquete.title }),
+      });
+    } catch (err) {
+      setError("No se pudo registrar la consulta");
+      console.error("Error al registrar la consulta:", err);
+    }
+  };
+
+  const renderTabs = () => (
+    <div className="bg-light py-3 mb-4 d-flex justify-content-center gap-4 border rounded">
+      <button
+        className={`btn ${activeTab === "admin" ? "btn-primary" : "btn-outline-primary"}`}
+        onClick={() => setActiveTab("admin")}
+      >
+        Ver contactos
+      </button>
+      <button
+        className={`btn ${activeTab === "consultas" ? "btn-primary" : "btn-outline-primary"}`}
+        onClick={() => setActiveTab("consultas")}
+      >
+        Ver consultas
+      </button>
+    </div>
+  );
+
+  if (activeTab === "admin") {
+    return (
+      <div className="container py-5">
+        {renderTabs()}
+        <AdminContacts />
+      </div>
+    );
+  }
+
+  if (activeTab === "consultas") {
+    return (
+      <div className="container py-5">
+        {renderTabs()}
+        <AdminConsultas />
+      </div>
+    );
+  }
+
+  if (!paquete) {
+    return (
+      <div className="container py-5 text-center">
+        <h2>Paquete no encontrado</h2>
+        <button
+          className="btn btn-outline-secondary mt-3"
+          onClick={() => navigate("/")}
+        >
+          Volver al inicio
+        </button>
+      </div>
+    );
+  }
+
+  return (
     <div className="container py-5">
+      {renderTabs()}
+
       <button
         className="btn btn-outline-dark mb-4 px-4 rounded-pill"
         onClick={() => navigate("/")}
@@ -17,88 +93,43 @@ function PackageDetail() {
       <div className="row align-items-center g-5">
         <div className="col-md-6">
           <img
-            src={data.imagen}
-            alt={data.alt}
+            src={paquete.image}
+            alt={paquete.detail.alt}
             className="img-fluid rounded shadow-lg"
           />
         </div>
         <div className="col-md-6">
-          <h1 className="mb-3 text-success fw-bold">{data.titulo}</h1>
-          <p className="lead text-muted">{data.descripcion}</p>
+          <h1 className="mb-3 text-success fw-bold">{paquete.title}</h1>
+          <p className="lead text-muted">{paquete.detail.descripcion}</p>
 
           <h5 className="mt-4 mb-3">Incluye:</h5>
           <ul className="list-group list-group-flush mb-4">
-            {data.servicios.map((s, i) => (
-              <li key={i} className="list-group-item">
-                ✅ {s}
+            {paquete.detail.servicios.map((s, i) => (
+              <li key={i} className="list-group-item d-flex align-items-start gap-2">
+                <FaCheckCircle className="text-success mt-1" />
+                <span>{s}</span>
               </li>
             ))}
           </ul>
 
-          <button className="btn btn-success btn-lg shadow-sm px-4">
-            Consultar disponibilidad
-          </button>
+          {!mostrarPrecio ? (
+            <button
+              className="btn btn-success btn-lg shadow-sm px-4"
+              onClick={handlePrecio}
+            >
+              Descubrí el valor aproximado
+            </button>
+          ) : (
+            <div className="alert alert-success text-center fw-bold fs-4">
+              {paquete.precio}
+            </div>
+          )}
+
+          {error && <div className="alert alert-danger mt-3">{error}</div>}
         </div>
       </div>
     </div>
   );
-
-  if (packageId === "llao-llao") {
-    return renderDetalle({
-      imagen: "/img/llao.jpg",
-      alt: "Llao Llao",
-      titulo: "Llao Llao Experience",
-      descripcion:
-        "Disfrutá de una experiencia premium en Bariloche, combinando golf, spa y naturaleza en el icónico hotel Llao Llao.",
-      servicios: [
-        "3 noches en Llao Llao Resort",
-        "2 green fees en Arelauquen y Llao Llao Golf",
-        "Traslados privados",
-        "Desayuno buffet",
-      ],
-    });
-  }
-
-  if (packageId === "chapelco") {
-    return renderDetalle({
-      imagen: "/img/chapelco.jpg",
-      alt: "Chapelco",
-      titulo: "Chapelco Adventure",
-      descripcion:
-        "Golf y aventura en la Patagonia. Jugá en uno de los mejores campos de Sudamérica con vista a los Andes.",
-      servicios: [
-        "4 noches en Loi Suites Chapelco",
-        "3 rondas de golf",
-        "Traslados aeropuerto-hotel",
-        "Actividades outdoor opcionales",
-      ],
-    });
-  }
-
-  if (packageId === "el-terron") {
-    return renderDetalle({
-      imagen: "/img/El terron golf.jpg",
-      alt: "El Terrón",
-      titulo: "El Terrón Golf Week",
-      descripcion:
-        "Una semana en Córdoba con golf ilimitado, gastronomía gourmet y relax total.",
-      servicios: [
-        "5 noches en Estancia El Terrón",
-        "Green fees ilimitados",
-        "Clases de golf personalizadas",
-        "Cena gourmet incluida",
-      ],
-    });
-  }
-
-  return (
-    <div className="container py-5 text-center">
-      <h2>Paquete no encontrado</h2>
-      <button className="btn btn-outline-secondary mt-3" onClick={() => navigate("/")}>
-        Volver al inicio
-      </button>
-    </div>
-  );
-}
+};
 
 export default PackageDetail;

@@ -3,6 +3,8 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import pool from './database.js';
 import contactRoutes from './routes/contactRoutes.js';
+import notifyRoutes from './routes/notifyRoutes.js';
+
 
 dotenv.config();
 
@@ -39,6 +41,7 @@ app.get('/api/ping', (req, res) => {
 
 // Usar las rutas del formulario de contacto
 app.use('/api/contact', contactRoutes);
+app.use('/api/notify', notifyRoutes);
 
 
 app.listen(PORT, () => {
