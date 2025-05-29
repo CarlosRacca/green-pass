@@ -54,12 +54,24 @@ const AdminPanel = () => {
       <div className="container py-5">
         <h2 className="text-center mb-4">Panel de Administrador</h2>
   
-        <div className="d-flex justify-content-center gap-4 mb-4">
+        <div className="d-flex justify-content-center flex-wrap gap-3 mb-4">
           <button
             className={`btn ${tab === "contacts" ? "btn-success" : "btn-outline-success"}`}
             onClick={() => setTab("contacts")}
           >
             Ver contactos
+          </button>
+          <button
+            className={`btn ${tab === "crearUsuario" ? "btn-success" : "btn-outline-primary"}`}
+            onClick={() => setTab("crearUsuario")}
+          >
+            Crear nuevo usuario
+          </button>
+          <button
+            className={`btn ${tab === "crearTorneo" ? "btn-success" : "btn-outline-primary"}`}
+            onClick={() => setTab("crearTorneo")}
+          >
+            Crear nuevo torneo
           </button>
           <button
             className={`btn ${tab === "consultas" ? "btn-success" : "btn-outline-success"}`}
@@ -68,6 +80,7 @@ const AdminPanel = () => {
             Ver consultas
           </button>
         </div>
+
   
         {tab === "contacts" && <AdminContacts />}
         {tab === "consultas" && <AdminConsultas />}

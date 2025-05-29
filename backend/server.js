@@ -4,6 +4,12 @@ import dotenv from 'dotenv';
 import pool from './database.js';
 import contactRoutes from './routes/contactRoutes.js';
 import notifyRoutes from './routes/notifyRoutes.js';
+import userRoutes from "./routes/userRoutes.js";
+import authRoutes from "./routes/authRoutes.js";
+import torneosRoutes from "./routes/torneosRoutes.js";
+import paquetesRoutes from "./routes/paquetesRoutes.js";
+import { EventEmitter } from "events";
+EventEmitter.defaultMaxListeners = 20;
 
 
 dotenv.config();
@@ -42,6 +48,12 @@ app.get('/api/ping', (req, res) => {
 // Usar las rutas del formulario de contacto
 app.use('/api/contact', contactRoutes);
 app.use('/api/notify', notifyRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/torneos", torneosRoutes);
+app.use("/api/paquetes", paquetesRoutes);
+
+
 
 
 app.listen(PORT, () => {
