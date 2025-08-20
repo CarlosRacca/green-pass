@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import Header from "./components/Header.js";
 import SimpleHeader from "./components/SimpleHeader.js";
 import Footer from "./components/Footer.js";
@@ -20,12 +20,19 @@ import RankingFinal from './pages/Torneos/RankingFinal.jsx';
 import RankingDia from './pages/Torneos/RankingDia.jsx';
 import AdminVerTorneos from "./pages/AdminVerTorneo.jsx";
 import AdminDetalleTorneo from "./pages/AdminDetalleTorneo.jsx";
+import ClienteVerTorneo from "./pages/ClienteVerTorneo.jsx";
+import ClientePanel from "./pages/ClientePanel.jsx";
+import EditarPerfilCliente from "./pages/EditarPerfilCliente.jsx";
+import VerItinerarioCliente from "./pages/VerItinerarioCliente.jsx";
+import SeleccionarPaquete from "./pages/SeleccionarPaquete.jsx";
+
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./App.css";
 
 function App() {
   const location = useLocation();
+  const navigate = useNavigate();
   const path = location.pathname;
   const [user, setUser] = useState(null);
   const [loadingUser, setLoadingUser] = useState(true);
@@ -39,6 +46,8 @@ function App() {
   const handleLogout = () => {
     localStorage.clear();
     setUser(null);
+    navigate("/"); // redirige al home
+    window.location.reload(); // opcional, fuerza recarga del estado global
   };
 
   const hideHeaderRoutes = [];
@@ -63,9 +72,20 @@ function App() {
             <Route path="/package/:packageId" element={<PackageDetail />} />
             <Route
               path="/login"
-              element={user ? <Navigate to="/panel" replace /> : <LoginForm onLoginSuccess={setUser} />}
+              element={
+                user ? (
+                  user.role === "superadmin" ? (
+                    <Navigate to="/panel" replace />
+                  ) : (
+                    <Navigate to="/cliente/panel" replace />
+                  )
+                ) : (
+                  <LoginForm onLoginSuccess={setUser} />
+                )
+              }
             />
             <Route path="/panel" element={<UserPanel />} />
+            <Route path="/cliente/panel" element={<ClientePanel />} />
             <Route path="/mi-viaje" element={<MiViaje />} />
             <Route path="/mis-datos" element={<MisDatos />} />
             <Route path="/admin/consultas" element={isSuperadmin ? <AdminConsultas /> : <Navigate to="/panel" replace />} />
@@ -79,6 +99,10 @@ function App() {
             <Route path="/torneos/:id/cargar-score" element={<CargarScore />} />
             <Route path="/torneos/:id/ranking-final" element={<RankingFinal />} />
             <Route path="/torneos/:id/ranking" element={<RankingDia />} />
+            <Route path="/cliente/torneo/:id" element={<ClienteVerTorneo />} />
+            <Route path="/cliente/perfil" element={<EditarPerfilCliente />} />
+            <Route path="/cliente/itinerario/:paqueteId" element={<VerItinerarioCliente />} />
+            <Route path="/cliente/seleccionar-paquete" element={<SeleccionarPaquete />} />
           </Routes>
         )}
       </main>
