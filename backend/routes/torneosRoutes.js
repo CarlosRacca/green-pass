@@ -43,6 +43,8 @@ router.get("/:id/completo", async (req, res) => {
         [dia.id]
       );
 
+      const parejaResultados = [];
+
       for (const pareja of parejasRes.rows) {
         const scoresRes = await pool.query(
           `SELECT * FROM torneo_scores WHERE dia_id = $1 AND (jugador_id = $2 OR jugador_id = $3)`,
@@ -51,16 +53,36 @@ router.get("/:id/completo", async (req, res) => {
 
         const scores = scoresRes.rows;
 
-        const longDrive = scores.some(s => s.long_drive);
-        const mejorApproach = scores.some(s => s.mejor_approach);
-        const birdies = scores.filter(s => s.score <= 3).length;
-        const bogeys = scores.filter(s => s.score >= 5).length;
+        parejaResultados.push({
+          pareja,
+          scores,
+          longDrive: scores.some(s => s.long_drive),
+          mejorApproach: scores.some(s => s.mejor_approach),
+          birdies: scores.filter(s => s.score <= 3).length,
+          bogeys: scores.filter(s => s.score >= 5).length
+        });
+      }
+
+      // Elegimos únicos ganadores por métrica del día
+      const maxBirdies = Math.max(...parejaResultados.map(p => p.birdies));
+      const minBogeys = Math.min(...parejaResultados.map(p => p.bogeys));
+      const firstLongDrive = parejaResultados.find(p => p.longDrive)?.pareja.pareja_id;
+      const firstApproach = parejaResultados.find(p => p.mejorApproach)?.pareja.pareja_id;
+
+      for (const p of parejaResultados) {
+        const { pareja, scores, longDrive, mejorApproach, birdies, bogeys } = p;
 
         parejasDetalle.push({
           dia_id: dia.id,
           dia_fecha: dia.fecha,
           modalidad: dia.modalidad,
           pareja_id: pareja.pareja_id,
+          longDrive: firstLongDrive === pareja.pareja_id,
+          mejorApproach: firstApproach === pareja.pareja_id,
+          birdies: birdies,
+          bogeys: bogeys,
+          ganador_birdies: birdies === maxBirdies,
+          ganador_bogeys: bogeys === minBogeys,
           jugador_1: {
             id: pareja.jugador_1_id,
             nombre: pareja.jugador_1_nombre,
@@ -72,11 +94,7 @@ router.get("/:id/completo", async (req, res) => {
             nombre: pareja.jugador_2_nombre,
             apellido: pareja.jugador_2_apellido,
             scores: scores.filter(s => s.jugador_id === pareja.jugador_2_id).sort((a, b) => a.hoyo - b.hoyo)
-          },
-          longDrive,
-          mejorApproach,
-          birdies,
-          bogeys
+          }
         });
       }
     }
@@ -174,22 +192,68 @@ router.get("/:id/scores-por-dia", async (req, res) => {
   }
 });
 
-// Cargar score y calcular puntos
+// PATCH y DELETE para scores
+router.patch("/scores/:id", async (req, res) => {
+  const { id } = req.params;
+  const { score, long_drive, mejor_approach } = req.body;
+
+  try {
+    const result = await pool.query(
+      `UPDATE torneo_scores SET score = $1, long_drive = $2, mejor_approach = $3 WHERE id = $4 RETURNING *`,
+      [score, long_drive || false, mejor_approach || false, id]
+    );
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error("Error al modificar score:", err);
+    res.status(500).json({ error: "Error al modificar score" });
+  }
+});
+
+router.delete("/scores/:id", async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await pool.query(`DELETE FROM torneo_scores WHERE id = $1`, [id]);
+    res.json({ mensaje: "Score eliminado correctamente" });
+  } catch (err) {
+    console.error("Error al eliminar score:", err);
+    res.status(500).json({ error: "Error al eliminar score" });
+  }
+});
+
+// Validación en carga: máximo 18 hoyos y únicos long drive / mejor approach por día
 router.post("/scores", async (req, res) => {
   const { torneo_id, dia_id, jugador_id, hoyo, score, long_drive, mejor_approach } = req.body;
 
   try {
-    const torneoCheck = await pool.query(`SELECT finalizado FROM torneos WHERE id = $1`, [torneo_id]);
-    if (torneoCheck.rows.length === 0) return res.status(404).json({ error: "Torneo no encontrado" });
-    if (torneoCheck.rows[0].finalizado) return res.status(400).json({ error: "El torneo ya está finalizado" });
-
-    const scoreCountRes = await pool.query(
+    const existingScores = await pool.query(
       `SELECT COUNT(*) FROM torneo_scores WHERE dia_id = $1 AND jugador_id = $2`,
       [dia_id, jugador_id]
     );
-    const cantidadActual = parseInt(scoreCountRes.rows[0].count);
-    if (cantidadActual >= 18) {
-      return res.status(400).json({ error: "Este jugador ya tiene 18 hoyos cargados para este día." });
+
+    if (parseInt(existingScores.rows[0].count) >= 18) {
+      return res.status(400).json({ error: "Ya se cargaron 18 hoyos para este jugador en este día" });
+    }
+
+    if (long_drive) {
+      const existingLD = await pool.query(
+        `SELECT 1 FROM torneo_scores WHERE dia_id = $1 AND long_drive = true LIMIT 1`,
+        [dia_id]
+      );
+      if (existingLD.rows.length > 0) {
+        return res.status(400).json({ error: "Ya hay un long drive asignado para este día" });
+      }
+    }
+
+    if (mejor_approach) {
+      const existingMA = await pool.query(
+        `SELECT 1 FROM torneo_scores WHERE dia_id = $1 AND mejor_approach = true LIMIT 1`,
+        [dia_id]
+      );
+      if (existingMA.rows.length > 0) {
+        return res.status(400).json({ error: "Ya hay un mejor approach asignado para este día" });
+      }
     }
 
     const result = await pool.query(
@@ -199,40 +263,43 @@ router.post("/scores", async (req, res) => {
       [torneo_id, dia_id, jugador_id, hoyo, score, long_drive || false, mejor_approach || false]
     );
 
-    const parejaRes = await pool.query(
-      `SELECT id FROM torneo_parejas
-       WHERE dia_id = $1 AND (jugador_1_id = $2 OR jugador_2_id = $2)`,
-      [dia_id, jugador_id]
-    );
-
-    if (parejaRes.rows.length > 0) {
-      const pareja_id = parejaRes.rows[0].id;
-
-      const parejaInfo = await pool.query(
-        `SELECT jugador_1_id, jugador_2_id FROM torneo_parejas WHERE id = $1`,
-        [pareja_id]
-      );
-      const { jugador_1_id, jugador_2_id } = parejaInfo.rows[0];
-
-      const scoresJ1 = await pool.query(
-        `SELECT COUNT(*) FROM torneo_scores WHERE dia_id = $1 AND jugador_id = $2`,
-        [dia_id, jugador_1_id]
-      );
-      const scoresJ2 = await pool.query(
-        `SELECT COUNT(*) FROM torneo_scores WHERE dia_id = $1 AND jugador_id = $2`,
-        [dia_id, jugador_2_id]
-      );
-
-      if (parseInt(scoresJ1.rows[0].count) >= 9 && parseInt(scoresJ2.rows[0].count) >= 9) {
-        await calcularPuntosParaPareja(dia_id, pareja_id);
-      }
-    }
-
     res.status(201).json(result.rows[0]);
   } catch (err) {
     console.error("Error al cargar score:", err);
     res.status(500).json({ error: "Error al cargar score" });
   }
 });
+
+// Obtener el torneo asignado a un usuario específico
+router.get("/usuario/:usuario_id", async (req, res) => {
+  const { usuario_id } = req.params;
+
+  try {
+    // Buscar la relación entre usuario y torneo
+    const rel = await pool.query(
+      "SELECT torneo_id FROM torneo_jugadores WHERE user_id = $1",
+      [usuario_id]
+    );
+
+    if (rel.rows.length === 0) {
+      return res.status(404).json({ error: "Este usuario no está asignado a ningún torneo" });
+    }
+
+    const torneoId = rel.rows[0].torneo_id;
+
+    // Obtener los datos del torneo
+    const torneo = await pool.query("SELECT * FROM torneos WHERE id = $1", [torneoId]);
+
+    if (torneo.rows.length === 0) {
+      return res.status(404).json({ error: "Torneo no encontrado" });
+    }
+
+    res.json(torneo.rows[0]);
+  } catch (err) {
+    console.error("Error al obtener el torneo del usuario:", err);
+    res.status(500).json({ error: "Error interno del servidor" });
+  }
+});
+
 
 export default router;

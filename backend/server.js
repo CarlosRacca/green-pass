@@ -7,8 +7,14 @@ import notifyRoutes from './routes/notifyRoutes.js';
 import userRoutes from "./routes/userRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import torneosRoutes from "./routes/torneosRoutes.js";
-import paquetesRoutes from "./routes/paquetesRoutes.js";
+import paquetesRoutes from "./routes/paquetesRoute.js";
+import itinerariosRoutes from "./routes/itinerariosRoutes.js";
 import { EventEmitter } from "events";
+import usuariosPaquetesRoutes from "./routes/usuariosPaquetesRoutes.js";
+import viajesRoutes from "./routes/viajesRoutes.js";
+import consultasRoutes from './routes/consultasRoutes.js';
+
+
 EventEmitter.defaultMaxListeners = 20;
 
 
@@ -52,9 +58,11 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/torneos", torneosRoutes);
 app.use("/api/paquetes", paquetesRoutes);
+app.use("/api/itinerarios", itinerariosRoutes);
+app.use("/api/usuarios-paquetes", usuariosPaquetesRoutes);
+app.use('/api/consultas', consultasRoutes);
 
-
-
+app.use("/api/viajes", viajesRoutes);
 
 app.listen(PORT, () => {
   console.log(`Servidor corriendo en http://localhost:${PORT}`);

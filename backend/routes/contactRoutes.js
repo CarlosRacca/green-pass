@@ -1,57 +1,68 @@
+// routes/contactsRoutes.js
 import express from 'express';
 import pool from '../database.js';
 
 const router = express.Router();
 
-// GET: obtener todos los contactos
+// Obtener todos los contactos
 router.get('/', async (req, res) => {
   try {
-    const result = await pool.query('SELECT * FROM contacts');
-    res.json({ success: true, data: result.rows });
+    const result = await pool.query('SELECT * FROM contacts ORDER BY id ASC');
+    res.json(result.rows);
   } catch (err) {
-    console.error('Error al consultar contactos:', err);
-    res.status(500).json({ success: false, error: 'Error interno del servidor' });
+    res.status(500).json({ error: 'Error al obtener los contactos' });
   }
 });
 
-// POST: ya lo tenías, pero lo incluyo por si querés todo en uno
-router.post('/', async (req, res) => {
-    const { nombre, apellido, email, telefono, matricula } = req.body;
-  
-    if (!nombre || !apellido || !email || !telefono || !matricula) {
-      return res.status(400).json({ success: false, error: 'Faltan datos' });
-    }
-  
-    try {
-      const result = await pool.query(
-        `INSERT INTO contacts (nombre, apellido, email, telefono, matricula)
-         VALUES ($1, $2, $3, $4, $5)
-         RETURNING *`,
-        [nombre, apellido, email, telefono, matricula]
-      );
-  
-      res.status(201).json({ success: true, data: result.rows[0] });
-    } catch (err) {
-      console.error('Error al insertar contacto:', err);
-      res.status(500).json({ success: false, error: 'Error interno del servidor' });
-    }
-  });
+// Obtener un contacto por ID
+router.get('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query('SELECT * FROM contacts WHERE id = $1', [id]);
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: 'Error al obtener el contacto' });
+  }
+});
 
-  router.get('/admin', async (req, res) => {
-    const { password } = req.query;
-  
-    if (password !== process.env.ADMIN_PASSWORD) {
-      return res.status(401).json({ success: false, message: 'Contraseña incorrecta' });
-    }
-  
-    try {
-      const result = await pool.query('SELECT * FROM contacts ORDER BY fecha DESC');
-      res.json({ success: true, data: result.rows });
-    } catch (err) {
-      console.error('Error al obtener contactos:', err);
-      res.status(500).json({ success: false, error: 'Error del servidor' });
-    }
-  });
-  
+// Crear un nuevo contacto
+router.post('/', async (req, res) => {
+  const { nombre, apellido, email, telefono, mensaje } = req.body;
+  try {
+    const result = await pool.query(
+      'INSERT INTO contacts (nombre, apellido, email, telefono, mensaje) VALUES ($1, $2, $3, $4, $5) RETURNING *',
+      [nombre, apellido, email, telefono, mensaje]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: 'Error al crear el contacto' });
+  }
+});
+
+// Actualizar un contacto
+router.put('/:id', async (req, res) => {
+  const { id } = req.params;
+  const { nombre, apellido, email, telefono, mensaje } = req.body;
+  try {
+    const result = await pool.query(
+      'UPDATE contacts SET nombre=$1, apellido=$2, email=$3, telefono=$4, mensaje=$5 WHERE id=$6 RETURNING *',
+      [nombre, apellido, email, telefono, mensaje, id]
+    );
+    res.json(result.rows[0]);
+  } catch (err) {
+    res.status(500).json({ error: 'Error al actualizar el contacto' });
+  }
+});
+
+// Eliminar un contacto
+router.delete('/:id', async (req, res) => {
+  const { id } = req.params;
+  try {
+    await pool.query('DELETE FROM contacts WHERE id = $1', [id]);
+    res.json({ message: 'Contacto eliminado' });
+  } catch (err) {
+    res.status(500).json({ error: 'Error al eliminar el contacto' });
+  }
+});
 
 export default router;
