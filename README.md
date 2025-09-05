@@ -1,73 +1,100 @@
-Green pass
+Green Pass — Monorepo (Frontend + Backend)
 
-# Getting Started with Create React App
+## Estructura
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+```
+backend/    # API Node/Express + PostgreSQL
+frontend/   # React (CRA) + Bootstrap + framer-motion
+```
 
-## Available Scripts
+## Requisitos
 
-In the project directory, you can run:
+- Node.js 18+
+- npm 9+
+- PostgreSQL 13+ (o un servicio gestionado)
 
-### `npm start`
+## Variables de entorno
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Backend (`backend/.env`):
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```
+PORT=5001
+DATABASE_URL=postgres://USER:PASSWORD@HOST:5432/DBNAME
+JWT_SECRET=cambia-esto
+```
 
-### `npm test`
+Frontend (`frontend/.env`):
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+```
+REACT_APP_API_URL=http://localhost:5001/api
+```
 
-### `npm run build`
+Nota: El frontend tiene un fallback a `http://localhost:5001/api` si no definís `REACT_APP_API_URL`.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Instalación
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+cd backend && npm i
+cd ../frontend && npm i
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+## Desarrollo
 
-### `npm run eject`
+En dos terminales separadas:
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+```
+# Terminal 1
+cd backend
+npm run dev
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+# Terminal 2
+cd frontend
+npm start
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+Back-end corre en `http://localhost:5001` y el front en `http://localhost:3000`.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Endpoints útiles (Backend)
 
-## Learn More
+- `GET /api/ping` → sanity check
+- `GET /api/test-db` → prueba conexión a DB
+- `POST /api/auth/login` → login (JWT)
+- `GET /api/users`, `PUT /api/users/:id` → gestión de usuarios
+- `GET /api/torneos` y relacionados
+- `POST /api/notify/notify-package-view` → tracking de vistas de paquetes
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Build de producción (Frontend)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+cd frontend
+npm run build
+```
 
-### Code Splitting
+El directorio `frontend/build/` está ignorado por git.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Despliegue
 
-### Analyzing the Bundle Size
+- Frontend: Vercel/Netlify (CRA está listo). Configurar `REACT_APP_API_URL` a la URL de la API en producción.
+- Backend: Render/Railway/Fly/Heroku. Configurar `PORT`, `DATABASE_URL` y `JWT_SECRET` en el servicio.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## Scripts útiles
 
-### Making a Progressive Web App
+Backend:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+```
+npm run dev     # nodemon
+npm start       # producción
+```
 
-### Advanced Configuration
+Frontend:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+```
+npm start       # dev
+npm run build   # prod
+```
 
-### Deployment
+## Notas de arquitectura
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
-# green-pass
+- Cliente HTTP centralizado en `frontend/src/api/client.js` (usa `REACT_APP_API_URL`).
+- Estado global de auth con `AuthContext` y persistencia en `localStorage`.
+- UI: Bootstrap + microanimaciones con framer-motion, skeletons en vistas largas.
