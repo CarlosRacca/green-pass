@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useContext } from "react";
 import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import Header from "./components/Header.js";
 import SimpleHeader from "./components/SimpleHeader.js";
@@ -29,25 +29,18 @@ import SeleccionarPaquete from "./pages/SeleccionarPaquete.jsx";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./App.css";
+import { AuthContext } from "./context/AuthContext.jsx";
 
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const path = location.pathname;
-  const [user, setUser] = useState(null);
-  const [loadingUser, setLoadingUser] = useState(true);
-
-  useEffect(() => {
-    const stored = localStorage.getItem("user");
-    if (stored) setUser(JSON.parse(stored));
-    setLoadingUser(false);
-  }, []);
+  const { user, setUser } = useContext(AuthContext);
 
   const handleLogout = () => {
     localStorage.clear();
     setUser(null);
     navigate("/"); // redirige al home
-    window.location.reload(); // opcional, fuerza recarga del estado global
   };
 
   const hideHeaderRoutes = [];
@@ -64,10 +57,7 @@ function App() {
       )}
 
       <main className="flex-grow-1">
-        {loadingUser ? (
-          <p className="text-center mt-5">Cargando sesión...</p>
-        ) : (
-          <Routes>
+        <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/package/:packageId" element={<PackageDetail />} />
             <Route
@@ -103,8 +93,7 @@ function App() {
             <Route path="/cliente/perfil" element={<EditarPerfilCliente />} />
             <Route path="/cliente/itinerario/:paqueteId" element={<VerItinerarioCliente />} />
             <Route path="/cliente/seleccionar-paquete" element={<SeleccionarPaquete />} />
-          </Routes>
-        )}
+        </Routes>
       </main>
 
       <Footer />

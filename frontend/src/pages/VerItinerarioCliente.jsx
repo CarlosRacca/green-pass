@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "axios";
+import api from "../api/client";
 
 const VerItinerarioCliente = () => {
   const { paqueteId } = useParams();
@@ -13,8 +13,8 @@ const VerItinerarioCliente = () => {
 
     const fetchItinerario = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5001/api/itinerarios/cliente/${stored.id}/paquete/${paqueteId}`
+        const res = await api.get(
+          `/itinerarios/cliente/${stored.id}/paquete/${paqueteId}`
         );
         setItinerario(res.data);
       } catch (error) {
