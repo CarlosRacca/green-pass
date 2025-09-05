@@ -1,4 +1,5 @@
 import axios from "axios";
+import { toast } from "../components/ToastProvider.jsx";
 
 const DEFAULT_BASE_URL = (() => {
   const envUrl = process.env.REACT_APP_API_URL;
@@ -18,6 +19,15 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+api.interceptors.response.use(
+  (res) => res,
+  (error) => {
+    const message = error?.response?.data?.error || 'Error de red';
+    toast({ type: 'error', message });
+    return Promise.reject(error);
+  }
+);
 
 export default api;
 

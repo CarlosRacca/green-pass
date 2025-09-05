@@ -20,10 +20,19 @@ router.post("/", async (req, res) => {
   }
 });
 
+// Cache simple en memoria (TTL 60s)
+let cacheAll = { data: null, ts: 0 };
+const TTL = 60 * 1000;
+
 // Obtener todos los paquetes
 router.get("/", async (req, res) => {
   try {
+    const now = Date.now();
+    if (cacheAll.data && now - cacheAll.ts < TTL) {
+      return res.json(cacheAll.data);
+    }
     const result = await pool.query("SELECT * FROM paquetes");
+    cacheAll = { data: result.rows, ts: now };
     res.json(result.rows);
   } catch (err) {
     console.error("Error al obtener paquetes:", err);

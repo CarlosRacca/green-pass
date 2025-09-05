@@ -6,6 +6,8 @@ import reportWebVitals from './reportWebVitals.js';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 import { BrowserRouter } from 'react-router-dom';
 import ScrollToTop from './components/ScrollToTop.jsx';
+import ToastProvider from './components/ToastProvider.jsx';
+import ErrorBoundary from './components/ErrorBoundary.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
 
 
@@ -14,9 +16,13 @@ root.render(
   <BrowserRouter>
     <ScrollToTop />
     <AuthProvider>
-      <React.StrictMode>
-        <App />
-      </React.StrictMode>
+      <ToastProvider>
+        <ErrorBoundary>
+          <React.StrictMode>
+            <App />
+          </React.StrictMode>
+        </ErrorBoundary>
+      </ToastProvider>
     </AuthProvider>
   </BrowserRouter>
 );

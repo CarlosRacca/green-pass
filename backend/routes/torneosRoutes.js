@@ -3,10 +3,19 @@ import pool from '../database.js';
 
 const router = express.Router();
 
+// Cache en memoria para lista de torneos (TTL 60s)
+let cacheTorneos = { data: null, ts: 0 };
+const TTL = 60 * 1000;
+
 // Obtener todos los torneos
 router.get("/", async (req, res) => {
   try {
+    const now = Date.now();
+    if (cacheTorneos.data && now - cacheTorneos.ts < TTL) {
+      return res.json(cacheTorneos.data);
+    }
     const result = await pool.query("SELECT * FROM torneos ORDER BY fecha_inicio DESC");
+    cacheTorneos = { data: result.rows, ts: now };
     res.json(result.rows);
   } catch (err) {
     console.error("Error al obtener torneos:", err);
