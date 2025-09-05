@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/client";
 
@@ -33,7 +34,18 @@ const AdminDetalleTorneo = () => {
     fetchTorneo();
   }, [id]);
 
-  if (loading) return <p className="text-center mt-5">Cargando torneo...</p>;
+  if (loading) return (
+    <div className="container mt-5">
+      <div className="placeholder-glow">
+        <span className="placeholder col-6"></span>
+      </div>
+      <div className="placeholder-glow mt-3">
+        <span className="placeholder col-12"></span>
+        <span className="placeholder col-12"></span>
+        <span className="placeholder col-10"></span>
+      </div>
+    </div>
+  );
   if (!torneo) return <p className="text-center mt-5">No se encontró el torneo</p>;
 
   return (
@@ -42,7 +54,9 @@ const AdminDetalleTorneo = () => {
         ← Volver
       </button>
 
-      <h2 className="mb-3">🏌️ {torneo.torneo.nombre}</h2>
+      <motion.h2 className="mb-3" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }}>
+        🏌️ {torneo.torneo.nombre}
+      </motion.h2>
       <p>
         Cliente: {torneo.torneo.cliente_id} | Inicio:{" "}
         {new Date(torneo.torneo.fecha_inicio).toLocaleDateString()} | Fin:{" "}
