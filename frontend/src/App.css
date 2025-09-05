@@ -1,3 +1,22 @@
+:root {
+  --gp-green: #1c694d;
+  --gp-green-light: #2aa877;
+  --gp-dark: #111;
+}
+
+.btn-success {
+  background-color: var(--gp-green);
+  border-color: var(--gp-green);
+}
+.btn-success:hover {
+  background-color: var(--gp-green-light);
+  border-color: var(--gp-green-light);
+}
+
+.breadcrumb .breadcrumb-item + .breadcrumb-item::before {
+  color: #999;
+}
+
 
 .App {
   text-align: center;

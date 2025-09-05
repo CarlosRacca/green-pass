@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import AdminLayout from "../components/AdminLayout.jsx";
 
 const AdminCrearTorneo = () => {
   const [form, setForm] = useState({
@@ -46,8 +47,7 @@ const AdminCrearTorneo = () => {
   };
 
   return (
-    <div className="container mt-5 mb-5 text-center">
-      <h2 className="mb-4">📅 Crear Torneo</h2>
+    <AdminLayout title="📅 Crear Torneo" breadcrumbs={[{ label: "Torneos", to: "/admin/ver-torneos" }, { label: "Crear", active: true }]}>
       <form onSubmit={handleSubmit} className="mx-auto" style={{ maxWidth: "600px" }}>
         <div className="mb-3">
           <input
@@ -109,7 +109,7 @@ const AdminCrearTorneo = () => {
           Crear Torneo
         </button>
       </form>
-    </div>
+    </AdminLayout>
   );
 };
 

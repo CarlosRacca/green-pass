@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import AdminLayout from "../components/AdminLayout.jsx";
 
 const AdminVerTorneos = () => {
   const [torneos, setTorneos] = useState([]);
@@ -14,8 +15,10 @@ const AdminVerTorneos = () => {
   }, [API_URL]);
 
   return (
-    <div className="container mt-5 mb-5">
-      <h2 className="text-center mb-4">🏆 Torneos creados</h2>
+    <AdminLayout
+      title="🏆 Torneos creados"
+      breadcrumbs={[{ label: "Torneos", active: true }]}
+    >
       {torneos.length === 0 ? (
         <p className="text-center">No hay torneos aún.</p>
       ) : (
@@ -57,7 +60,7 @@ const AdminVerTorneos = () => {
           </tbody>
         </table>
       )}
-    </div>
+    </AdminLayout>
   );
 };
 
