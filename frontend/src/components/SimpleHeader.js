@@ -1,26 +1,27 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import logo from "../assets/GP VERDE Y BLANCO.png";
 
 const SimpleHeader = ({ user, onLogout }) => {
   return (
     <div className="d-flex justify-content-between align-items-center px-4 py-3 bg-dark text-white">
-      <a href="/">
+      <Link to="/">
         <img src={logo} alt="Green Pass" style={{ height: "40px" }} />
-      </a>
+      </Link>
       <div className="d-flex gap-3">
         {user?.role === "superadmin" && (
-          <a href="/panel" className="btn btn-outline-light btn-sm">
+          <Link to="/panel" className="btn btn-outline-light btn-sm">
             Panel
-          </a>
+          </Link>
         )}
         {user ? (
           <button onClick={onLogout} className="btn btn-outline-danger btn-sm">
             Cerrar sesión
           </button>
         ) : (
-          <a href="/login" className="btn btn-outline-light btn-sm">
+          <Link to="/login" className="btn btn-outline-light btn-sm">
             Login
-          </a>
+          </Link>
         )}
       </div>
     </div>

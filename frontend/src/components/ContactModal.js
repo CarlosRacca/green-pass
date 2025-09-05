@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import api from '../api/client';
 
 const ContactModal = () => {
   const [form, setForm] = useState({
@@ -10,6 +11,7 @@ const ContactModal = () => {
   });
 
   const [mensaje, setMensaje] = useState('');
+  const [enviando, setEnviando] = useState(false);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -18,18 +20,10 @@ const ContactModal = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setEnviando(true);
     try {
-      const res = await fetch(`${process.env.REACT_APP_API_URL}/api/contact`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(form)
-      });
-
-      const data = await res.json();
-
-      if (data.success) {
+      const { data } = await api.post('/contact', form);
+      if (data?.success) {
         setMensaje('Formulario enviado correctamente ✅');
         setForm({ nombre: '', apellido: '', email: '', telefono: '', matricula: '' });
       } else {
@@ -38,6 +32,8 @@ const ContactModal = () => {
     } catch (err) {
       console.error(err);
       setMensaje('Error de conexión con el servidor ❌');
+    } finally {
+      setEnviando(false);
     }
   };
 
@@ -135,8 +131,8 @@ const ContactModal = () => {
 
               </div>
               <div className="modal-footer">
-                <button type="submit" className="btn btn-success">
-                  Enviar
+                <button type="submit" className="btn btn-success" disabled={enviando}>
+                  {enviando ? 'Enviando…' : 'Enviar'}
                 </button>
                 <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">
                   Cerrar
