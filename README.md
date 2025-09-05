@@ -76,6 +76,8 @@ El directorio `frontend/build/` está ignorado por git.
 
 - Frontend: Vercel/Netlify (CRA está listo). Configurar `REACT_APP_API_URL` a la URL de la API en producción.
 - Backend: Render/Railway/Fly/Heroku. Configurar `PORT`, `DATABASE_URL` y `JWT_SECRET` en el servicio.
+  - CORS_ORIGINS: lista separada por comas de orígenes permitidos (ej: `https://green-pass.vercel.app,https://tu-dominio.com`).
+  - Healthchecks: `/healthz`, `/readyz`. Métricas en `/metrics` (Prometheus).
 
 ## Scripts útiles
 
@@ -85,6 +87,13 @@ Backend:
 npm run dev     # nodemon
 npm start       # producción
 npm run seed    # carga datos demo (1 admin, 2 clientes, 2 paquetes, 1 viaje)
+
+Frontend:
+
+```
+npm run lint    # corre ESLint en src
+npm run format  # Prettier en src
+```
 ```
 
 Frontend:
