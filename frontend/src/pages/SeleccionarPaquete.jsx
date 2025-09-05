@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api/client";
 
 const SeleccionarPaquete = () => {
   const [user, setUser] = useState(null);
@@ -13,7 +13,7 @@ const SeleccionarPaquete = () => {
 
     const fetchPaquetes = async () => {
       try {
-        const res = await axios.get(`http://localhost:5001/api/paquetes/cliente/${storedUser.id}`);
+        const res = await api.get(`/paquetes/cliente/${storedUser.id}`);
         setPaquetes(res.data);
       } catch (error) {
         console.error("Error al obtener paquetes del cliente:", error);

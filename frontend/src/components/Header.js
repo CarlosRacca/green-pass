@@ -3,7 +3,6 @@ import logo from "../assets/GP VERDE Y BLANCO.png";
 import { FaWhatsapp } from "react-icons/fa";
 import { AuthContext } from '../context/AuthContext.jsx';
 
-
 function Header({ onLogout }) {
   const { user } = useContext(AuthContext);
 
@@ -51,9 +50,12 @@ function Header({ onLogout }) {
               Cerrar sesión
             </button>
           ) : (
-            <a href="/login" className="btn btn-outline-light">
-              Login
-            </a>
+            // Login oculto temporalmente
+            false && (
+              <a href="/login" className="btn btn-outline-light">
+                Login
+              </a>
+            )
           )}
         </div>
       </div>

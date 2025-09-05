@@ -1,7 +1,7 @@
 // src/pages/ClienteVerTorneo.jsx
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api/client";
 
 const ClienteVerTorneo = () => {
   const { id } = useParams();
@@ -14,8 +14,8 @@ const ClienteVerTorneo = () => {
   useEffect(() => {
     const fetchTorneo = async () => {
       try {
-        const res = await axios.get(
-          `http://localhost:5001/api/torneos/${id}/completo`
+        const res = await api.get(
+          `/torneos/${id}/completo`
         );
         setTorneo(res.data);
       } catch (error) {

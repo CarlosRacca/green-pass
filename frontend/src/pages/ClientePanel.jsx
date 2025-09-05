@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api/client";
 
 const ClientePanel = () => {
   const [user, setUser] = useState(null);
@@ -14,7 +14,7 @@ const ClientePanel = () => {
 
     const fetchTorneo = async () => {
       try {
-        const res = await axios.get(`http://localhost:5001/api/torneos`);
+        const res = await api.get(`/torneos`);
         console.log("📦 Todos los torneos:", res.data);
 
         const misTorneos = res.data.filter(

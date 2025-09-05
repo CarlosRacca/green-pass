@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+import api from "../api/client";
 
 const EditarPerfilCliente = () => {
   const storedUser = JSON.parse(localStorage.getItem("user"));
@@ -18,7 +18,7 @@ const EditarPerfilCliente = () => {
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get(`http://localhost:5001/api/users/${storedUser.id}`);
+        const res = await api.get(`/users/${storedUser.id}`);
         setFormData(res.data);
       } catch (error) {
         console.error("Error al obtener datos del usuario", error);
@@ -27,7 +27,7 @@ const EditarPerfilCliente = () => {
 
     const fetchPaquetes = async () => {
       try {
-        const res = await axios.get("http://localhost:5001/api/paquetes");
+        const res = await api.get("/paquetes");
         setPaquetes(res.data);
       } catch (error) {
         console.error("Error al obtener paquetes", error);
@@ -49,7 +49,7 @@ const EditarPerfilCliente = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`http://localhost:5001/api/users/${storedUser.id}`, formData);
+      await api.put(`/users/${storedUser.id}`, formData);
       alert("Perfil actualizado correctamente.");
     } catch (error) {
       console.error("Error al actualizar el perfil", error);

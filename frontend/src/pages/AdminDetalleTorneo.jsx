@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "../api/client";
 
-const API_URL = "http://localhost:5001/api/torneos";
+const API_URL = "/torneos";
 
 const AdminDetalleTorneo = () => {
   const { id } = useParams();
@@ -15,13 +15,13 @@ const AdminDetalleTorneo = () => {
   useEffect(() => {
     const fetchTorneo = async () => {
       try {
-        const res = await axios.get(`${API_URL}/${id}/completo`);
+        const res = await api.get(`${API_URL}/${id}/completo`);
         setTorneo(res.data);
 
-        const rankingRes = await axios.get(`${API_URL}/${id}/ranking-final`);
+        const rankingRes = await api.get(`${API_URL}/${id}/ranking-final`);
         setLeaderboard(rankingRes.data);
 
-        const scoresRes = await axios.get(`${API_URL}/${id}/scores-por-dia`);
+        const scoresRes = await api.get(`${API_URL}/${id}/scores-por-dia`);
         setScoresPorDia(scoresRes.data);
       } catch (err) {
         console.error("Error al cargar datos del torneo:", err);

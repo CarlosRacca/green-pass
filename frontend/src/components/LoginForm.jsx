@@ -1,3 +1,4 @@
+import api from "../api/client";
 import React, { useState } from "react";
 import "./LoginForm.css";
 import backgroundImg from "../assets/bg-golf.jpg";
@@ -14,18 +15,7 @@ const LoginForm = ({ onLoginSuccess }) => {
     setError("");
 
     try {
-      const res = await fetch("http://localhost:5001/api/auth/login", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await res.json();
-
-      if (!res.ok) {
-        setError(data.error || "Error al iniciar sesión");
-        return;
-      }
+      const { data } = await api.post("/auth/login", { email, password });
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));

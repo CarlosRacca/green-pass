@@ -1,4 +1,5 @@
 import express from "express";
+import bcrypt from "bcrypt";
 import pool from "../database.js";
 
 const router = express.Router();
@@ -45,6 +46,7 @@ router.post("/", async (req, res) => {
   } = req.body;
 
   try {
+    const passwordToStore = password ? await bcrypt.hash(password, 10) : null;
     const result = await pool.query(
       `INSERT INTO users
         (nombre, apellido, dni, matricula, handicap, email, password, cliente_id, role, paquete_id)
@@ -57,7 +59,7 @@ router.post("/", async (req, res) => {
         matricula,
         handicap,
         email,
-        password,
+        passwordToStore,
         cliente_id,
         role,
         paquete_id
@@ -87,6 +89,7 @@ router.put("/:id", async (req, res) => {
   } = req.body;
 
   try {
+    const passwordToStore = password ? await bcrypt.hash(password, 10) : null;
     const result = await pool.query(
       `UPDATE users SET
         nombre = $1,
@@ -95,7 +98,7 @@ router.put("/:id", async (req, res) => {
         matricula = $4,
         handicap = $5,
         email = $6,
-        password = $7,
+        password = COALESCE($7, password),
         cliente_id = $8,
         role = $9,
         paquete_id = $10
@@ -108,7 +111,7 @@ router.put("/:id", async (req, res) => {
         matricula,
         handicap,
         email,
-        password,
+        passwordToStore,
         cliente_id,
         role,
         paquete_id,
