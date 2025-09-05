@@ -14,6 +14,9 @@ const EditarPerfilCliente = () => {
     paquete_id: "",
   });
   const [paquetes, setPaquetes] = useState([]);
+  const [saving, setSaving] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [okMsg, setOkMsg] = useState("");
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -48,12 +51,17 @@ const EditarPerfilCliente = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMsg("");
+    setOkMsg("");
+    setSaving(true);
     try {
       await api.put(`/users/${storedUser.id}`, formData);
-      alert("Perfil actualizado correctamente.");
+      setOkMsg("Perfil actualizado correctamente.");
     } catch (error) {
       console.error("Error al actualizar el perfil", error);
-      alert("Error al guardar los cambios.");
+      setErrorMsg("Error al guardar los cambios.");
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -102,7 +110,10 @@ const EditarPerfilCliente = () => {
             </select>
           </div>
 
-          <div className="text-center mt-4 d-flex justify-content-between">
+          {errorMsg && <div className="alert alert-danger">{errorMsg}</div>}
+          {okMsg && <div className="alert alert-success">{okMsg}</div>}
+
+          <div className="text-center mt-3 d-flex justify-content-between">
             <button
               type="button"
               className="btn btn-outline-secondary rounded-pill px-4"
@@ -114,8 +125,9 @@ const EditarPerfilCliente = () => {
             <button
               type="submit"
               className="btn btn-success rounded-pill px-5 py-2 fs-5"
+              disabled={saving}
             >
-              Guardar cambios
+              {saving ? "Guardando…" : "Guardar cambios"}
             </button>
           </div>
         </form>
