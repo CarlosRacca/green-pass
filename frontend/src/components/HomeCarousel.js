@@ -33,6 +33,8 @@ const HomeCarousel = () => {
                     className="card-img-top"
                     loading="lazy"
                     decoding="async"
+                    width="300"
+                    height="180"
                     style={{ height: "180px", objectFit: "cover" }}
                   />
                   <div className="card-body d-flex flex-column">
