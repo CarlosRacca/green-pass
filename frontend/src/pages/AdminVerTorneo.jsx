@@ -11,7 +11,7 @@ const AdminVerTorneos = () => {
       .then((res) => res.json())
       .then((data) => setTorneos(data))
       .catch((err) => console.error("Error al cargar torneos:", err));
-  }, []);
+  }, [API_URL]);
 
   return (
     <div className="container mt-5 mb-5">

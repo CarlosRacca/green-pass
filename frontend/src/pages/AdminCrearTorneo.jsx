@@ -17,7 +17,7 @@ const AdminCrearTorneo = () => {
       .then((res) => res.json())
       .then((data) => setUsuarios(data))
       .catch((err) => console.error("Error al cargar usuarios:", err));
-  }, []);
+  }, [API_URL]);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
