@@ -1,5 +1,6 @@
 // src/pages/ClienteVerTorneo.jsx
 import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import { useParams, useNavigate } from "react-router-dom";
 import api from "../api/client";
 
@@ -30,7 +31,18 @@ const ClienteVerTorneo = () => {
   const calcularTotal = (scores) =>
     scores.slice(0, 18).reduce((acc, s) => acc + s.score, 0);
 
-  if (loading) return <p className="text-center mt-5">Cargando torneo...</p>;
+  if (loading) return (
+    <div className="container mt-5">
+      <div className="placeholder-glow">
+        <span className="placeholder col-6"></span>
+      </div>
+      <div className="placeholder-glow mt-3">
+        <span className="placeholder col-12"></span>
+        <span className="placeholder col-12"></span>
+        <span className="placeholder col-10"></span>
+      </div>
+    </div>
+  );
   if (!torneo) return <p className="text-center mt-5">Torneo no encontrado</p>;
 
   return (
@@ -39,7 +51,9 @@ const ClienteVerTorneo = () => {
         ← Volver
       </button>
 
-      <h2 className="mb-3 text-success">🏌️ {torneo.torneo.nombre}</h2>
+      <motion.h2 className="mb-3 text-success" initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }}>
+        🏌️ {torneo.torneo.nombre}
+      </motion.h2>
       <p>
         Del {new Date(torneo.torneo.fecha_inicio).toLocaleDateString()} al{" "}
         {new Date(torneo.torneo.fecha_fin).toLocaleDateString()}
