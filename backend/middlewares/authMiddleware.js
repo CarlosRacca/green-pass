@@ -24,3 +24,13 @@ export function requireSuperAdmin(req, res, next) {
   }
   next();
 }
+
+export function requireSelfOrSuperAdmin(paramKey = "id") {
+  return (req, res, next) => {
+    const targetId = parseInt(req.params[paramKey]);
+    if (req.user.role === "superadmin" || req.user.id === targetId) {
+      return next();
+    }
+    return res.status(403).json({ error: "Acceso denegado" });
+  };
+}

@@ -1,10 +1,11 @@
 import express from "express";
 import pool from "../database.js";
+import { verifyToken, requireSuperAdmin, requireSelfOrSuperAdmin } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
 // ✅ Crear un nuevo viaje
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, requireSuperAdmin, async (req, res) => {
   const { cliente_id, paquete_id, fecha_reserva, estado, puntos_otorgados } = req.body;
   try {
     const result = await pool.query(
@@ -20,7 +21,7 @@ router.post("/", async (req, res) => {
 });
 
 // ✅ Obtener todos los viajes
-router.get("/", async (req, res) => {
+router.get("/", verifyToken, requireSuperAdmin, async (req, res) => {
   try {
     const result = await pool.query(`
       SELECT v.*, u.nombre AS cliente_nombre, u.apellido AS cliente_apellido, p.nombre AS paquete_nombre
@@ -36,7 +37,7 @@ router.get("/", async (req, res) => {
 });
 
 // ✅ Obtener viajes por cliente
-router.get("/cliente/:clienteId", async (req, res) => {
+router.get("/cliente/:clienteId", verifyToken, requireSelfOrSuperAdmin("clienteId"), async (req, res) => {
   const { clienteId } = req.params;
   try {
     const result = await pool.query(
@@ -55,7 +56,7 @@ router.get("/cliente/:clienteId", async (req, res) => {
 });
 
 // ✅ Obtener un viaje por ID
-router.get("/:id", async (req, res) => {
+router.get("/:id", verifyToken, requireSuperAdmin, async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query(`
@@ -75,7 +76,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // ✅ Actualizar un viaje
-router.put("/:id", async (req, res) => {
+router.put("/:id", verifyToken, requireSuperAdmin, async (req, res) => {
   const { id } = req.params;
   const { cliente_id, paquete_id, fecha_reserva, estado, puntos_otorgados } = req.body;
   try {
@@ -94,7 +95,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // ✅ Eliminar un viaje
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verifyToken, requireSuperAdmin, async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query("DELETE FROM viajes WHERE id = $1 RETURNING *", [id]);

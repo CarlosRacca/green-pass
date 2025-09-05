@@ -1,11 +1,12 @@
 import express from "express";
 import bcrypt from "bcrypt";
 import pool from "../database.js";
+import { verifyToken, requireSuperAdmin, requireSelfOrSuperAdmin } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
 // GET todos los usuarios
-router.get("/", async (req, res) => {
+router.get("/", verifyToken, requireSuperAdmin, async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM users");
     res.json(result.rows);
@@ -16,7 +17,7 @@ router.get("/", async (req, res) => {
 });
 
 // GET usuario por ID
-router.get("/:id", async (req, res) => {
+router.get("/:id", verifyToken, requireSelfOrSuperAdmin("id"), async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query("SELECT * FROM users WHERE id = $1", [id]);
@@ -31,7 +32,7 @@ router.get("/:id", async (req, res) => {
 });
 
 // POST crear nuevo usuario
-router.post("/", async (req, res) => {
+router.post("/", verifyToken, requireSuperAdmin, async (req, res) => {
   const {
     nombre,
     apellido,
@@ -73,7 +74,7 @@ router.post("/", async (req, res) => {
 });
 
 // PUT actualizar usuario
-router.put("/:id", async (req, res) => {
+router.put("/:id", verifyToken, requireSelfOrSuperAdmin("id"), async (req, res) => {
   const { id } = req.params;
   const {
     nombre,
@@ -131,7 +132,7 @@ router.put("/:id", async (req, res) => {
 });
 
 // DELETE eliminar usuario
-router.delete("/:id", async (req, res) => {
+router.delete("/:id", verifyToken, requireSuperAdmin, async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query("DELETE FROM users WHERE id = $1 RETURNING *", [id]);
