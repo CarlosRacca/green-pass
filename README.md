@@ -84,6 +84,7 @@ Backend:
 ```
 npm run dev     # nodemon
 npm start       # producción
+npm run seed    # carga datos demo (1 admin, 2 clientes, 2 paquetes, 1 viaje)
 ```
 
 Frontend:
