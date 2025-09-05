@@ -31,6 +31,8 @@ const HomeCarousel = () => {
                     src={paquete.image}
                     alt={paquete.detail.alt}
                     className="card-img-top"
+                    loading="lazy"
+                    decoding="async"
                     style={{ height: "180px", objectFit: "cover" }}
                   />
                   <div className="card-body d-flex flex-column">

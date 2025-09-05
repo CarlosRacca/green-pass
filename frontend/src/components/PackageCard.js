@@ -10,6 +10,8 @@ const PackageCard = ({ image, title, description, link }) => {
           src={image}
           alt={title}
           className="card-img-top"
+          loading="lazy"
+          decoding="async"
           style={{ height: "220px", objectFit: "cover" }}
         />
         <div className="card-body d-flex flex-column">
