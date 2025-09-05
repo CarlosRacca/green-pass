@@ -1,11 +1,22 @@
 import express from "express";
+import Joi from "joi";
 import pool from "../database.js";
 import { verifyToken, requireSuperAdmin, requireSelfOrSuperAdmin } from "../middlewares/authMiddleware.js";
 
 const router = express.Router();
 
 // ✅ Crear un nuevo viaje
+const viajeSchema = Joi.object({
+  cliente_id: Joi.number().integer().required(),
+  paquete_id: Joi.number().integer().required(),
+  fecha_reserva: Joi.date().required(),
+  estado: Joi.string().valid('pendiente','confirmado','cancelado').required(),
+  puntos_otorgados: Joi.number().integer().allow(null),
+});
+
 router.post("/", verifyToken, requireSuperAdmin, async (req, res) => {
+  const { error } = viajeSchema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.message });
   const { cliente_id, paquete_id, fecha_reserva, estado, puntos_otorgados } = req.body;
   try {
     const result = await pool.query(
@@ -77,6 +88,8 @@ router.get("/:id", verifyToken, requireSuperAdmin, async (req, res) => {
 
 // ✅ Actualizar un viaje
 router.put("/:id", verifyToken, requireSuperAdmin, async (req, res) => {
+  const { error } = viajeSchema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.message });
   const { id } = req.params;
   const { cliente_id, paquete_id, fecha_reserva, estado, puntos_otorgados } = req.body;
   try {

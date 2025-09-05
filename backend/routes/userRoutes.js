@@ -1,5 +1,6 @@
 import express from "express";
 import bcrypt from "bcrypt";
+import Joi from "joi";
 import pool from "../database.js";
 import { verifyToken, requireSuperAdmin, requireSelfOrSuperAdmin } from "../middlewares/authMiddleware.js";
 
@@ -32,7 +33,22 @@ router.get("/:id", verifyToken, requireSelfOrSuperAdmin("id"), async (req, res) 
 });
 
 // POST crear nuevo usuario
+const userSchema = Joi.object({
+  nombre: Joi.string().allow(null, ""),
+  apellido: Joi.string().allow(null, ""),
+  dni: Joi.string().allow(null, ""),
+  matricula: Joi.string().allow(null, ""),
+  handicap: Joi.number().integer().allow(null),
+  email: Joi.string().email().required(),
+  password: Joi.string().min(6).allow(null, ""),
+  cliente_id: Joi.number().integer().allow(null),
+  role: Joi.string().valid("cliente", "superadmin").required(),
+  paquete_id: Joi.number().integer().allow(null),
+});
+
 router.post("/", verifyToken, requireSuperAdmin, async (req, res) => {
+  const { error } = userSchema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.message });
   const {
     nombre,
     apellido,
@@ -75,6 +91,8 @@ router.post("/", verifyToken, requireSuperAdmin, async (req, res) => {
 
 // PUT actualizar usuario
 router.put("/:id", verifyToken, requireSelfOrSuperAdmin("id"), async (req, res) => {
+  const { error } = userSchema.validate(req.body);
+  if (error) return res.status(400).json({ error: error.message });
   const { id } = req.params;
   const {
     nombre,

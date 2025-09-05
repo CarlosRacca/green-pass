@@ -1,5 +1,8 @@
 import express from 'express';
 import cors from 'cors';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import client from 'prom-client';
 import dotenv from 'dotenv';
 import pool from './database.js';
 import contactRoutes from './routes/contactRoutes.js';
@@ -23,8 +26,32 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5001;
 
-app.use(cors());
+app.use(helmet());
+app.use(cors({ origin: process.env.CORS_ORIGIN || true }));
 app.use(express.json());
+
+// Rate limiting básico
+const limiter = rateLimit({ windowMs: 15 * 60 * 1000, max: 100 });
+app.use(limiter);
+
+// Métricas Prometheus
+client.collectDefaultMetrics();
+const register = client.register;
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
+});
+
+// Healthchecks
+app.get('/healthz', (req, res) => res.status(200).send('ok'));
+app.get('/readyz', async (req, res) => {
+  try {
+    await pool.query('SELECT 1');
+    res.status(200).send('ready');
+  } catch {
+    res.status(500).send('not-ready');
+  }
+});
 
 // Rutas
 app.get('/', async (req, res) => {
