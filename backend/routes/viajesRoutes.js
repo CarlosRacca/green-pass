@@ -35,6 +35,25 @@ router.get("/", async (req, res) => {
   }
 });
 
+// ✅ Obtener viajes por cliente
+router.get("/cliente/:clienteId", async (req, res) => {
+  const { clienteId } = req.params;
+  try {
+    const result = await pool.query(
+      `SELECT v.*, p.nombre AS paquete_nombre
+       FROM viajes v
+       JOIN paquetes p ON v.paquete_id = p.id
+       WHERE v.cliente_id = $1
+       ORDER BY v.fecha_reserva DESC`,
+      [clienteId]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error al obtener viajes del cliente:", err);
+    res.status(500).json({ error: "Error al obtener viajes del cliente" });
+  }
+});
+
 // ✅ Obtener un viaje por ID
 router.get("/:id", async (req, res) => {
   const { id } = req.params;
