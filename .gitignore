@@ -36,3 +36,4 @@ yarn-error.log*
 
 *.log
 /backend/.env
+*.zip
