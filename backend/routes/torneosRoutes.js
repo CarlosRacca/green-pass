@@ -12,10 +12,12 @@ router.get("/", async (req, res) => {
   try {
     const now = Date.now();
     if (cacheTorneos.data && now - cacheTorneos.ts < TTL) {
+      res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
       return res.json(cacheTorneos.data);
     }
     const result = await pool.query("SELECT * FROM torneos ORDER BY fecha_inicio DESC");
     cacheTorneos = { data: result.rows, ts: now };
+    res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
     res.json(result.rows);
   } catch (err) {
     console.error("Error al obtener torneos:", err);
