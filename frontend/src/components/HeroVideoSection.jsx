@@ -12,20 +12,43 @@ export default function HeroVideoSection() {
     .split(",")
     .map((s) => s.trim())
     .filter(Boolean);
-  const playlist = (envList.length > 0 ? envList : [heroVideoUrl].filter(Boolean));
+  const [playlist, setPlaylist] = useState(envList.length > 0 ? envList : [heroVideoUrl].filter(Boolean));
+
+  // Fallback: si no hay env vars, intentamos cargar /hero/playlist.json desde public
+  useEffect(() => {
+    if (playlist.length > 0) return;
+    let cancelled = false;
+    fetch("/hero/playlist.json", { cache: "no-store" })
+      .then((res) => (res.ok ? res.json() : []))
+      .then((arr) => {
+        if (!cancelled && Array.isArray(arr) && arr.length > 0) {
+          setPlaylist(arr.filter(Boolean));
+        }
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, []);
 
   const getWeekIndex = () => {
     const now = new Date();
     const firstJan = new Date(now.getFullYear(), 0, 1);
     const pastDays = Math.floor((now - firstJan) / 86400000);
     const week = Math.floor((pastDays + firstJan.getDay() + 1) / 7); // aprox ISO week
-    return week % playlist.length;
+    return playlist.length > 0 ? (week % playlist.length) : 0;
   };
 
   const [activeIsA, setActiveIsA] = useState(true);
-  const [currentIndex, setCurrentIndex] = useState(getWeekIndex());
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [nextReady, setNextReady] = useState(false);
   const [nextPreloadAuto, setNextPreloadAuto] = useState(false);
+
+  useEffect(() => {
+    // reajustar índice cuando llegue playlist
+    if (playlist.length > 0 && currentIndex === 0) {
+      setCurrentIndex(getWeekIndex());
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [playlist.length]);
 
   useEffect(() => {
     if (!sectionRef.current) return;
@@ -81,7 +104,7 @@ export default function HeroVideoSection() {
       nextEl.preload = 'metadata';
       nextEl.load();
     } catch {}
-  }, [activeIsA, currentIndex, nextIndex]);
+  }, [activeIsA, currentIndex, nextIndex, playlist.length]);
 
   useEffect(() => {
     if (playlist.length === 0) return;
