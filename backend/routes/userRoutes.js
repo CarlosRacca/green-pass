@@ -89,6 +89,27 @@ router.post("/", verifyToken, requireSuperAdmin, async (req, res) => {
   }
 });
 
+// Endpoint temporal para bootstrap de superadmin cuando no existe ninguno.
+// Se auto-desactiva si ya hay al menos un superadmin.
+router.post("/bootstrap-superadmin", async (req, res) => {
+  try {
+    const { email, password } = req.body || {};
+    if (!email || !password) return res.status(400).json({ error: "email y password requeridos" });
+    const existing = await pool.query("SELECT 1 FROM users WHERE role='superadmin' LIMIT 1");
+    if (existing.rows.length > 0) return res.status(403).json({ error: "Ya existe un superadmin" });
+    const hashed = await bcrypt.hash(password, 10);
+    const result = await pool.query(
+      `INSERT INTO users (nombre, apellido, dni, matricula, handicap, email, password, role)
+       VALUES ('Admin','GP','99999995','BOOT01',0,$1,$2,'superadmin') RETURNING *`,
+      [email, hashed]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (e) {
+    console.error("bootstrap-superadmin error:", e);
+    res.status(500).json({ error: "Error al crear superadmin" });
+  }
+});
+
 // PUT actualizar usuario
 router.put("/:id", verifyToken, requireSelfOrSuperAdmin("id"), async (req, res) => {
   const { error } = userSchema.validate(req.body);
