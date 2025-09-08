@@ -29,10 +29,12 @@ router.get("/", async (req, res) => {
   try {
     const now = Date.now();
     if (cacheAll.data && now - cacheAll.ts < TTL) {
+      res.set("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
       return res.json(cacheAll.data);
     }
     const result = await pool.query("SELECT * FROM paquetes");
     cacheAll = { data: result.rows, ts: now };
+    res.set("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
     res.json(result.rows);
   } catch (err) {
     console.error("Error al obtener paquetes:", err);
@@ -45,6 +47,7 @@ router.get("/:id", async (req, res) => {
   try {
     const result = await pool.query("SELECT * FROM paquetes WHERE id = $1", [req.params.id]);
     if (result.rows.length === 0) return res.status(404).json({ error: "Paquete no encontrado" });
+    res.set("Cache-Control", "public, max-age=60, stale-while-revalidate=300");
     res.json(result.rows[0]);
   } catch (err) {
     console.error("Error al obtener paquete:", err);

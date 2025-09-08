@@ -3,9 +3,20 @@
     "react-scripts": "^5.0.1"
   },
   "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-config-react-app": "^7.0.1",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-react": "^7.34.1",
+    "eslint-plugin-react-hooks": "^4.6.2",
+    "prettier": "^3.3.3",
     "sharp": "^0.33.4"
   },
   "scripts": {
-    "webp": "node scripts/convert-webp.cjs"
+    "webp": "node scripts/convert-webp.cjs",
+    "lint": "eslint . --ext .js,.jsx --max-warnings=0 || true",
+    "format": "prettier -w .",
+    "format:check": "prettier -c .",
+    "lh": "lighthouse https://green-pass.vercel.app/ --preset=desktop --output=html --output-path=./lighthouse_latest.html"
   }
 }
