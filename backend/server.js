@@ -27,13 +27,37 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 5001;
-const ALLOWED_ORIGINS = (process.env.CORS_ORIGINS || '').split(',').map(s => s.trim()).filter(Boolean);
+// Orígenes permitidos por defecto (prod y local). Se pueden extender con CORS_ORIGINS
+const DEFAULT_ALLOWED_ORIGINS = [
+  'https://www.greenpass.app',
+  'https://greenpass.app',
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'http://localhost:5173',
+  'http://127.0.0.1:5173',
+];
+const ENV_ALLOWED = (process.env.CORS_ORIGINS || '')
+  .split(',')
+  .map(s => s.trim())
+  .filter(Boolean);
+const ALLOWED_ORIGINS = Array.from(new Set([...DEFAULT_ALLOWED_ORIGINS, ...ENV_ALLOWED]));
 
 app.use(helmet());
-app.use(cors({ origin: (origin, cb) => {
-  if (!origin || ALLOWED_ORIGINS.length === 0) return cb(null, true);
-  return cb(null, ALLOWED_ORIGINS.includes(origin));
-}}));
+const corsOptions = {
+  origin: (origin, cb) => {
+    // Permitir requests de herramientas (sin origin) y orígenes incluidos
+    if (!origin) return cb(null, true);
+    if (ALLOWED_ORIGINS.includes(origin)) return cb(null, true);
+    return cb(null, false);
+  },
+  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+  preflightContinue: false,
+  optionsSuccessStatus: 204,
+};
+app.use(cors(corsOptions));
+app.options('*', cors(corsOptions));
 app.use(express.json());
 app.use(compression());
 app.use(pinoHttp({
