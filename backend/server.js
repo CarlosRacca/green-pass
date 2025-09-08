@@ -23,7 +23,6 @@ import bcrypt from 'bcryptjs';
 
 EventEmitter.defaultMaxListeners = 20;
 
-
 dotenv.config();
 
 const app = express();
