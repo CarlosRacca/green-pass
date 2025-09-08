@@ -15,6 +15,7 @@ import UserPanel from "./pages/UserPanel.jsx";
 import MiViaje from "./pages/MiViaje.jsx";
 import MisDatos from "./pages/MisDatos.jsx";
 import AdminCrearUsuario from './pages/AdminCrearUsuario.jsx';
+
 import AdminCrearTorneo from './pages/AdminCrearTorneo.jsx';
 import CargarScore from './pages/Torneos/CargarScore.jsx';
 import RankingFinal from './pages/Torneos/RankingFinal.jsx';
@@ -26,7 +27,6 @@ import ClientePanel from "./pages/ClientePanel.jsx";
 import EditarPerfilCliente from "./pages/EditarPerfilCliente.jsx";
 import VerItinerarioCliente from "./pages/VerItinerarioCliente.jsx";
 import SeleccionarPaquete from "./pages/SeleccionarPaquete.jsx";
-
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./App.css";
