@@ -106,7 +106,7 @@ router.post("/bootstrap-superadmin", async (req, res) => {
     res.status(201).json(result.rows[0]);
   } catch (e) {
     console.error("bootstrap-superadmin error:", e);
-    res.status(500).json({ error: "Error al crear superadmin" });
+    res.status(500).json({ error: e?.message || "Error al crear superadmin" });
   }
 });
 
