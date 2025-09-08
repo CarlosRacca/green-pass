@@ -1,62 +1,29 @@
 import React, { useContext } from "react";
+import { Link } from "react-router-dom";
 import logo from "../assets/GP VERDE Y BLANCO.png";
-import { FaWhatsapp } from "react-icons/fa";
+import { FaInstagram, FaFacebookF } from "react-icons/fa";
 import { AuthContext } from '../context/AuthContext.jsx';
 
 function Header({ onLogout }) {
   const { user } = useContext(AuthContext);
 
   return (
-    <header
-      className="text-white py-5"
-      style={{
-        backgroundImage:
-          "linear-gradient(to bottom, rgba(0, 0, 0, 0.7), rgba(0,0,0,0.9)), url('/img/bg-golf.jpg')",
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        backgroundRepeat: "no-repeat",
-      }}
-    >
-      <div className="container d-flex flex-column align-items-center text-center animate__animated animate__fadeInDown">
-        <img
-          src={logo}
-          alt="Logo de Green Pass"
-          className="img-fluid mb-4"
-          style={{ maxWidth: "200px" }}
-        />
-        <h1 className="display-5 fw-bold mb-3">
-          ¡Viví el golf como nunca antes!
-        </h1>
-        <p className="text-light fs-5 mb-4" style={{ maxWidth: "700px" }}>
-          Sumate a una experiencia exclusiva de golf, relax y naturaleza en los
-          destinos más increíbles de Argentina.
-        </p>
-
-        <a
-          href="https://wa.me/1133681576"
-          className="btn btn-success px-4 py-2 d-flex align-items-center gap-2 mb-3"
-        >
-          <FaWhatsapp size={18} /> Quiero más info ahora
-        </a>
-
-        <div className="d-flex gap-3">
-          {user?.role === "superadmin" && (
-            <a href="/panel" className="btn btn-outline-light">
-              Panel Admin
-            </a>
-          )}
-          {user ? (
-            <button onClick={onLogout} className="btn btn-outline-danger">
-              Cerrar sesión
-            </button>
-          ) : (
-            // Login oculto temporalmente
-            false && (
-              <a href="/login" className="btn btn-outline-light">
-                Login
-              </a>
-            )
-          )}
+    <header className="sticky-top" style={{ zIndex: 1020, backgroundColor: '#f3f3f1', borderBottom: '1px solid rgba(0,0,0,0.06)' }}>
+      <div className="container d-flex align-items-center py-3" style={{ gap: 24 }}>
+        <Link to="/">
+          <img src={logo} alt="Green Pass" style={{ height: 40 }} />
+        </Link>
+        <div className="flex-grow-1 d-flex justify-content-center">
+          <nav className="d-flex align-items-center" style={{ gap: 28, letterSpacing: 3, fontSize: 13, fontWeight: 600 }}>
+            <a href="#about" className="text-decoration-none text-dark text-uppercase">About</a>
+            <a href="#work" className="text-decoration-none text-dark text-uppercase">Work</a>
+            <a href="#contact" className="text-decoration-none text-dark text-uppercase">Press + Testimonials</a>
+          </nav>
+        </div>
+        <div className="d-flex align-items-center" style={{ gap: 14 }}>
+          <a href="#contact" aria-label="Instagram" className="text-dark"><FaInstagram size={18} /></a>
+          <a href="#contact" aria-label="Facebook" className="text-dark"><FaFacebookF size={16} /></a>
+          <a href="#contact" className="btn btn-sm" style={{ backgroundColor: '#6d3a1c', color: '#fff', borderRadius: 4, paddingInline: 18, letterSpacing: 2 }}>Contact</a>
         </div>
       </div>
     </header>

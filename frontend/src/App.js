@@ -15,7 +15,6 @@ import UserPanel from "./pages/UserPanel.jsx";
 import MiViaje from "./pages/MiViaje.jsx";
 import MisDatos from "./pages/MisDatos.jsx";
 import AdminCrearUsuario from './pages/AdminCrearUsuario.jsx';
-
 import AdminCrearTorneo from './pages/AdminCrearTorneo.jsx';
 import CargarScore from './pages/Torneos/CargarScore.jsx';
 import RankingFinal from './pages/Torneos/RankingFinal.jsx';
