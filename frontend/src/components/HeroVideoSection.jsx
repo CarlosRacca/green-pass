@@ -87,7 +87,7 @@ export default function HeroVideoSection() {
     a.play().catch(() => {});
     b.pause();
     b.currentTime = 0;
-  }, []);
+  }, [playlist.length]);
 
   const nextIndex = playlist.length > 0 ? ((currentIndex + 1) % playlist.length) : 0;
 
