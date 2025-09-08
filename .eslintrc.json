@@ -1,0 +1,19 @@
+{
+  "root": true,
+  "env": {
+    "browser": true,
+    "node": true,
+    "es2022": true,
+    "jest": false
+  },
+  "extends": [
+    "react-app"
+  ],
+  "overrides": [
+    {
+      "files": ["backend/**/*.js", "backend/**/*.cjs"],
+      "env": { "node": true }
+    }
+  ]
+}
+
