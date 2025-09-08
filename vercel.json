@@ -2,6 +2,14 @@
   "version": 2,
   "builds": [
     { "src": "frontend/package.json", "use": "@vercel/static-build", "config": { "distDir": "build" } }
+  ],
+  "redirects": [
+    {
+      "source": "/(.*)",
+      "has": [ { "type": "host", "value": "greenpass.app" } ],
+      "destination": "https://www.greenpass.app/$1",
+      "permanent": true
+    }
   ]
 }
 
