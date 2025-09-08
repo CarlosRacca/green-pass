@@ -1,3 +1,24 @@
+node_modules/
+.env
+backend/.env
+backend/.env.*
+frontend/.env*
+*.log
+*.tmp
+*.sqlite
+*.sqlite-journal
+*.DS_Store
+
+# Ignore local media and heavy assets
+frontend/src/assets/*.mp4
+frontend/src/assets/*.mov
+frontend/src/assets/*.avi
+
+# Build outputs
+frontend/build/
+build/
+.vercel/
+.render/
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 

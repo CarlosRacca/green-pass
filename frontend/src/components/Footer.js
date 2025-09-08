@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 
 function Footer() {
   const [form, setForm] = useState({
@@ -46,114 +47,61 @@ function Footer() {
   };
 
   return (
-    <footer className="bg-dark text-white text-center py-4">
-      <div className="container">
-        <p>&copy; {new Date().getFullYear()} Green Pass. Todos los derechos reservados.</p>
+    <footer id="contact" className="bg-dark text-white text-center py-5">
+      <div className="container" style={{ maxWidth: 720 }}>
+        <p className="mb-4">&copy; {new Date().getFullYear()} Green Pass. Todos los derechos reservados.</p>
 
-        <div className="d-flex justify-content-center gap-3 mt-3">
-          <button className="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#modalQuienesSomos">
-            ¿Quiénes somos?
-          </button>
-
+        <div className="d-flex justify-content-center">
           <button className="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#modalContacto">
             Solicitar información
           </button>
         </div>
-      </div>
 
-      {/* Modal ¿Quiénes somos? */}
-      <div className="modal fade" id="modalQuienesSomos" tabIndex="-1" aria-labelledby="modalQuienesSomosLabel" aria-hidden="true">
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content bg-light text-dark">
-            <div className="modal-header">
-              <h5 className="modal-title" id="modalQuienesSomosLabel">¿Quiénes somos?</h5>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div className="modal-body">
-              <p>
-                Green Pass es una empresa argentina especializada en experiencias de golf. Combinamos golf, turismo y gastronomía
-                en destinos exclusivos como Llao Llao, Chapelco y El Terrón. Nuestra misión es brindarte una experiencia inolvidable.
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
+        {/* Modal Contacto funcional */}
+        <div className="modal fade" id="modalContacto" tabIndex="-1" aria-labelledby="modalContactoLabel" aria-hidden="true">
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content bg-light text-dark">
+              <div className="modal-header">
+                <h5 className="modal-title" id="modalContactoLabel">Solicitar información</h5>
+                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+              </div>
+              <div className="modal-body">
+                <motion.form
+                  initial={{ opacity: 0, y: 16 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4 }}
+                  onSubmit={handleSubmit}
+                >
+                  <div className="row g-3 text-start">
+                    <div className="col-md-6">
+                      <label htmlFor="nombre" className="form-label">Nombre</label>
+                      <input type="text" className="form-control" id="nombre" name="nombre" value={form.nombre} onChange={handleChange} required />
+                    </div>
+                    <div className="col-md-6">
+                      <label htmlFor="apellido" className="form-label">Apellido</label>
+                      <input type="text" className="form-control" id="apellido" name="apellido" value={form.apellido} onChange={handleChange} required />
+                    </div>
+                    <div className="col-md-6">
+                      <label htmlFor="email" className="form-label">Correo electrónico</label>
+                      <input type="email" className="form-control" id="email" name="email" value={form.email} onChange={handleChange} required />
+                    </div>
+                    <div className="col-md-6">
+                      <label htmlFor="telefono" className="form-label">Teléfono</label>
+                      <input type="tel" className="form-control" id="telefono" name="telefono" value={form.telefono} onChange={handleChange} required />
+                    </div>
+                    <div className="col-12">
+                      <label htmlFor="matricula" className="form-label">Matrícula de golf</label>
+                      <input type="text" className="form-control" id="matricula" name="matricula" value={form.matricula} onChange={handleChange} required />
+                    </div>
+                  </div>
 
-      {/* Modal Contacto funcional */}
-      <div className="modal fade" id="modalContacto" tabIndex="-1" aria-labelledby="modalContactoLabel" aria-hidden="true">
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content bg-light text-dark">
-            <div className="modal-header">
-              <h5 className="modal-title" id="modalContactoLabel">Solicitar información</h5>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
-            </div>
-            <div className="modal-body">
-              <form onSubmit={handleSubmit}>
-                <div className="mb-3">
-                  <label htmlFor="nombre" className="form-label">Nombre</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="nombre"
-                    name="nombre"
-                    value={form.nombre}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="apellido" className="form-label">Apellido</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="apellido"
-                    name="apellido"
-                    value={form.apellido}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="email" className="form-label">Correo electrónico</label>
-                  <input
-                    type="email"
-                    className="form-control"
-                    id="email"
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="telefono" className="form-label">Teléfono</label>
-                  <input
-                    type="tel"
-                    className="form-control"
-                    id="telefono"
-                    name="telefono"
-                    value={form.telefono}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-                <div className="mb-3">
-                  <label htmlFor="matricula" className="form-label">Matrícula de golf</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    id="matricula"
-                    name="matricula"
-                    value={form.matricula}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
+                  {mensaje && <div className="alert alert-info mt-3">{mensaje}</div>}
 
-                {mensaje && <div className="alert alert-info">{mensaje}</div>}
-
-                <button type="submit" className="btn btn-success">Enviar</button>
-              </form>
+                  <div className="d-grid d-md-flex justify-content-md-end mt-3">
+                    <button type="submit" className="btn btn-success">Enviar</button>
+                  </div>
+                </motion.form>
+              </div>
             </div>
           </div>
         </div>

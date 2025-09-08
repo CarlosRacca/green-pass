@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion } from "framer-motion";
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { paquetes } from "../data/paquetes.js";
 import { FaCheckCircle } from "react-icons/fa";
@@ -86,8 +87,10 @@ const PackageDetail = () => {
     );
   }
 
+  // Animación mínima y única del contenedor
+
   return (
-    <div className="container py-5">
+    <motion.div className="container py-5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
       {renderTabs()}
 
       <button
@@ -135,7 +138,7 @@ const PackageDetail = () => {
           {error && <div className="alert alert-danger mt-3">{error}</div>}
         </div>
       </div>
-    </div>
+    </motion.div>
   );
 };
 

@@ -18,7 +18,7 @@ const MisDatos = () => {
       }
     };
     if (stored?.id) fetchUser();
-  }, []);
+  }, [stored?.id]);
 
   if (loading) {
     return (

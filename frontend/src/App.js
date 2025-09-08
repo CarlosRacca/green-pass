@@ -2,6 +2,7 @@ import React, { useContext } from "react";
 import { Routes, Route, Navigate, useLocation, useNavigate } from "react-router-dom";
 import Header from "./components/Header.js";
 import SimpleHeader from "./components/SimpleHeader.js";
+import SiteHeader from "./components/SiteHeader.jsx";
 import Footer from "./components/Footer.js";
 import Home from "./pages/Home.js";
 import PackageDetail from "./pages/PackageDetail.js";
@@ -48,13 +49,7 @@ function App() {
 
   return (
     <div className="d-flex flex-column min-vh-100">
-      {!hideHeaderRoutes.includes(path) && (
-        path === "/" ? (
-          <Header user={user} onLogout={handleLogout} />
-        ) : (
-          <SimpleHeader user={user} onLogout={handleLogout} />
-        )
-      )}
+      {!hideHeaderRoutes.includes(path) && <SiteHeader />}
 
       <main className="flex-grow-1">
         <Routes>

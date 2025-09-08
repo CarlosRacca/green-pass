@@ -18,6 +18,7 @@ import { EventEmitter } from "events";
 import usuariosPaquetesRoutes from "./routes/usuariosPaquetesRoutes.js";
 import viajesRoutes from "./routes/viajesRoutes.js";
 import consultasRoutes from './routes/consultasRoutes.js';
+import bcrypt from 'bcryptjs';
 
 
 EventEmitter.defaultMaxListeners = 20;
@@ -118,9 +119,28 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: "Error interno del servidor" });
 });
 
+async function ensureSuperadmin() {
+  try {
+    const email = process.env.SUPERADMIN_EMAIL;
+    const password = process.env.SUPERADMIN_PASSWORD;
+    if (!email || !password) return; // no-op si no está configurado
+    const { rows } = await pool.query('SELECT id FROM users WHERE email=$1 LIMIT 1', [email]);
+    if (rows.length > 0) return;
+    const hash = await bcrypt.hash(password, 10);
+    await pool.query(
+      'INSERT INTO users (nombre, apellido, dni, matricula, handicap, email, password, role) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)',
+      ['Admin', 'GP', '99999996', 'SUPER02', 0, email, hash, 'superadmin']
+    );
+    console.log('Superadmin creado en DB');
+  } catch (e) {
+    console.error('Error ensureSuperadmin:', e);
+  }
+}
+
 if (process.env.NODE_ENV !== 'test') {
-  app.listen(PORT, () => {
+  app.listen(PORT, async () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
+    await ensureSuperadmin();
   });
 }
 

@@ -2,6 +2,8 @@
   --gp-green: #1c694d;
   --gp-green-light: #2aa877;
   --gp-dark: #111;
+  --gp-accent: #F5BA67;
+  --gp-serif: 'Cormorant Garamond', serif;
 }
 
 .btn-success {
@@ -17,20 +19,11 @@
   color: #999;
 }
 
-
 .App {
   text-align: center;
-  
 }
 
-
-
-header {
-  background: linear-gradient(to bottom right, #007bff, #0056b3);
-}
-
-
-header {  background: linear-gradient(to bottom right, #001E26); /* Reemplaza con tus colores */}
+/* header styles handled in component */
 
 .App-logo {
   height: 40vmin;
@@ -39,19 +32,24 @@ header {  background: linear-gradient(to bottom right, #001E26); /* Reemplaza co
 
 .card {
   display: flex;
-  flex-direction: column; /* Esto permite que los elementos dentro de la tarjeta se apilen verticalmente */
+  flex-direction: column;
+  border: 0;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
 .card-img-top {
-  height: 200px; /* Ajusta la altura de las imágenes según tu necesidad */
-  object-fit: cover; /* Esto asegura que la imagen se recorte y mantenga su aspecto */
+  height: 200px;
+  object-fit: cover;
 }
 
 .card-body {
-  flex-grow: 1; /* Esto permite que el cuerpo de la tarjeta ocupe el espacio restante */
+  flex-grow: 1;
 }
 
-.btn-primary {  background-color: #006742; /* Cambia por el color de tu marca */}
+.btn-primary {
+  background-color: #006742;
+}
 
 @media (prefers-reduced-motion: no-preference) {
   .App-logo {
@@ -70,91 +68,69 @@ header {  background: linear-gradient(to bottom right, #001E26); /* Reemplaza co
   color: white;
 }
 
+/* Hero responsive heights */
+@media (max-width: 768px) {
+  .hero-viewport-height {
+    min-height: 70vh !important;
+  }
+}
+
+/* Header refinements */
+.sticky-top {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+.text-uppercase:hover {
+  opacity: 0.8;
+}
+
+/* New SiteHeader styles with brand colors */
+.site-nav .site-link {
+  text-decoration: none;
+  color: #001E26;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.site-nav .site-link:hover { opacity: 0.75; }
+.site-icon { color: #001E26; }
+.site-icon:hover { opacity: 0.75; }
+.site-contact-btn {
+  background-color: #006742; /* brand green */
+  color: #fff;
+  border-radius: 4px;
+  padding-inline: 18px;
+  letter-spacing: 1px;
+}
+.site-contact-btn:hover { background-color: #008E58; }
+
 .App-link {
   color: #61dafb;
 }
 
 @keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
 }
 
-/* === FOOTER ESTILOS PERSONALIZADOS (Green Pass) === */
-
+/* Footer refinado */
 footer {
   background-color: #006742;
   color: white;
   padding: 3rem 0;
-  font-family: 'Helvetica Neue', sans-serif;
+  font-family: 'Inter', 'Helvetica Neue', sans-serif;
   font-size: 0.95rem;
 }
-
-.footer-logo {
-  max-width: 120px;
-}
-
-.footer-title {
-  font-size: 1.2rem;
-  font-weight: 600;
-  margin-bottom: 1rem;
-  text-align: left;
-}
-
-.footer-link a {
-  color: white;
-  text-decoration: underline;
-}
-
-.footer-link a:hover {
-  color: #F5BA67;
-  text-decoration: none;
-}
-
-.footer-btn {
-  background-color: #F5BA67;
-  color: #001E26;
-  border: none;
-  font-size: 0.9rem;
-  padding: 0.5rem 1rem;
-  margin-top: 1rem;
-}
-
-.footer-divider {
-  border-color: rgba(255, 255, 255, 0.2);
-  margin: 2rem 0 1rem;
-}
-
-.footer-bottom {
-  font-size: 0.85rem;
-  opacity: 0.7;
-  text-align: center;
-}
-
-.footer-section p {
-  text-align: left;
-  margin-bottom: 0.5rem;
-}
-
+.footer-logo { max-width: 120px; }
+.footer-title { font-size: 1.2rem; font-weight: 600; margin-bottom: 1rem; text-align: left; }
+.footer-link a { color: white; text-decoration: underline; }
+.footer-link a:hover { color: var(--gp-accent); text-decoration: none; }
+.footer-btn { background-color: var(--gp-accent); color: #001E26; border: none; font-size: 0.9rem; padding: 0.5rem 1rem; margin-top: 1rem; }
+.footer-divider { border-color: rgba(255,255,255,0.2); margin: 2rem 0 1rem; }
+.footer-bottom { font-size: 0.85rem; opacity: 0.7; text-align: center; }
+.footer-section p { text-align: left; margin-bottom: 0.5rem; }
 @media (max-width: 768px) {
-  .footer-title {
-    text-align: center;
-  }
-
-  .footer-section p {
-    text-align: center;
-  }
-
-  .footer-logo {
-    display: block;
-    margin: 0 auto 1rem;
-  }
-
-  .footer-btn {
-    display: block;
-    margin: 1rem auto 0;
-  }
+  .footer-title, .footer-section p { text-align: center; }
+  .footer-logo { display: block; margin: 0 auto 1rem; }
+  .footer-btn { display: block; margin: 1rem auto 0; }
 }
