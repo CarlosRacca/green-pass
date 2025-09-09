@@ -1,7 +1,11 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Link } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext.jsx";
 
 const AdminLayout = ({ title, breadcrumbs = [], children, actions = null }) => {
+  const { user } = useContext(AuthContext);
+  const role = user?.role || "guest";
+
   return (
     <div className="container mt-4 mb-5">
       <nav aria-label="breadcrumb" className="mb-3">
@@ -23,7 +27,12 @@ const AdminLayout = ({ title, breadcrumbs = [], children, actions = null }) => {
 
       <div className="d-flex justify-content-between align-items-center mb-3">
         <h2 className="m-0 text-success fw-bold">{title}</h2>
-        <div>{actions}</div>
+        <div className="d-flex align-items-center" style={{ gap: 8 }}>
+          {role === 'superadmin' && (
+            <a href="https://admin-h6lrbxde1-carlos-raccas-projects.vercel.app" target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-outline-success">Admin</a>
+          )}
+          {actions}
+        </div>
       </div>
 
       <div className="card border-0 shadow-sm">
