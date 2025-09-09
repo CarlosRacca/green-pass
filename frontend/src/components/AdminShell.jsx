@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Home, Users, MessageSquare, Plane, Trophy, BarChart3, Menu, X, Bell, Settings, Search } from "lucide-react";
+import logo from "../assets/GP VERDE OSC Y NEGRO.png";
 
 const navItems = [
   { to: "/admin", label: "Dashboard", icon: Home },
@@ -17,16 +18,19 @@ export default function AdminShell({ children }) {
   return (
     <div className="min-h-screen" style={{ background: 'var(--gp-bg)' }}>
       {/* Header */}
-      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-black/5">
-        <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between gap-3">
+      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-black/5 h-16">
+        <div className="mx-auto max-w-7xl px-4 h-full flex items-center justify-between gap-3">
           <button aria-label="Abrir menú" className="md:hidden inline-flex items-center justify-center rounded-md border border-black/10 w-10 h-10" onClick={() => setOpen(!open)}>
             {open ? <X size={18} /> : <Menu size={18} />}
           </button>
-          <div className="hidden md:block font-semibold tracking-wide">Green Pass Admin</div>
+          <div className="hidden md:flex items-center gap-2">
+            <img src={logo} alt="Green Pass" style={{ height: 28 }} />
+            <span className="font-semibold tracking-wide">Admin</span>
+          </div>
           <div className="flex items-center gap-2 flex-1 max-w-md">
             <div className="relative w-full">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
-              <input placeholder="Buscar usuarios, torneos, viajes..." className="form-control ps-5" />
+              <input placeholder="Buscar usuarios, torneos, viajes..." className="form-control ps-5 py-2" style={{ height: 38 }} />
             </div>
           </div>
           <div className="flex items-center gap-2">
