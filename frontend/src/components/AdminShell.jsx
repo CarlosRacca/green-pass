@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { NavLink } from "react-router-dom";
-import { Home, Users, MessageSquare, Plane, Trophy, BarChart3, Menu, X } from "lucide-react";
+import { Home, Users, MessageSquare, Plane, Trophy, BarChart3, Menu, X, Bell, Settings, Search } from "lucide-react";
 
 const navItems = [
   { to: "/admin", label: "Dashboard", icon: Home },
@@ -18,12 +18,20 @@ export default function AdminShell({ children }) {
     <div className="min-h-screen bg-[#f7f7f6]">
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-black/5">
-        <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
+        <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between gap-3">
           <button aria-label="Abrir menú" className="md:hidden inline-flex items-center justify-center rounded-md border border-black/10 w-10 h-10" onClick={() => setOpen(!open)}>
             {open ? <X size={18} /> : <Menu size={18} />}
           </button>
           <div className="hidden md:block font-semibold tracking-wide">Green Pass Admin</div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 flex-1 max-w-md">
+            <div className="relative w-full">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" size={16} />
+              <input placeholder="Buscar usuarios, torneos, viajes..." className="form-control ps-5" />
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <button className="btn btn-sm btn-light border"><Bell size={16} /></button>
+            <button className="btn btn-sm btn-light border"><Settings size={16} /></button>
             <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-sm">SA</div>
           </div>
         </div>
