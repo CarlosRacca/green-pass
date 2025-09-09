@@ -8,7 +8,10 @@ dotenv.config();
 export async function login(req, res) {
   const { email, password } = req.body;
 
-  console.log("INTENTANDO LOGIN:", email, password);
+  // Evitar loguear credenciales sensibles en consola
+  if (process.env.NODE_ENV === 'development') {
+    try { console.log("INTENTANDO LOGIN:", email); } catch {}
+  }
   try {
     const userResult = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
     const user = userResult.rows[0];
