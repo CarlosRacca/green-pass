@@ -1,3 +1,7 @@
+/* Offset para header fixed-top */
+.with-fixed-header {
+  padding-top: 76px; /* altura aprox del header */
+}
 :root {
   --gp-green: #1c694d;
   --gp-green-light: #2aa877;

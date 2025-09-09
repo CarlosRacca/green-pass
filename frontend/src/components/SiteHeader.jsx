@@ -4,43 +4,71 @@ import { FaInstagram } from "react-icons/fa";
 import logo from "../assets/GP VERDE OSC Y NEGRO.png";
 
 export default function SiteHeader() {
-  const [open, setOpen] = useState(false);
+  const [open] = useState(false);
 
   return (
-    <header className="site-header sticky-top" style={{ backgroundColor: '#f3f3f1', borderBottom: '1px solid rgba(0,0,0,0.06)', zIndex: 1020 }}>
-      <nav className="navbar navbar-expand-md navbar-light" style={{ paddingTop: 10, paddingBottom: 10 }}>
-        <div className="container d-flex align-items-center">
-          <Link className="navbar-brand d-flex align-items-center" to="/">
-            <img src={logo} alt="Green Pass" style={{ height: 44 }} />
-          </Link>
+    <header className="site-header fixed-top" style={{ backgroundColor: '#f3f3f1', borderBottom: '1px solid rgba(0,0,0,0.06)', zIndex: 1050 }}>
+      <div className="container">
+        {/* Desktop (>= md): Grid de 3 columnas: logo | centro | acciones */}
+        <div className="d-none d-md-grid align-items-center" style={{ gridTemplateColumns: 'auto 1fr auto', display: 'grid', columnGap: 16, paddingTop: 10, paddingBottom: 10 }}>
+          <div className="d-flex align-items-center">
+            <Link className="d-flex align-items-center" to="/">
+              <img src={logo} alt="Green Pass" style={{ height: 44 }} />
+            </Link>
+          </div>
 
+          <nav aria-label="Primary" className="d-flex justify-content-center">
+            <ul className="list-unstyled d-flex m-0 align-items-center" style={{ gap: 28 }}>
+              <li>
+                <a href="#work" className="text-decoration-none text-uppercase fw-semibold text-dark" style={{ letterSpacing: 2, fontSize: 14 }}>Experiencias</a>
+              </li>
+              <li>
+                <a href="#about" className="text-decoration-none text-uppercase fw-semibold text-dark" style={{ letterSpacing: 2, fontSize: 14 }}>Sobre nosotros</a>
+              </li>
+            </ul>
+          </nav>
+
+          <div className="d-flex align-items-center justify-content-end" style={{ gap: 14 }}>
+            <a href="https://www.instagram.com/greenpassok?igsh=andibzQ5OWE2cGFy" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-dark"><FaInstagram size={22} /></a>
+            <Link to="/login" className="btn btn-sm" style={{ backgroundColor: '#1a7f4b', color: '#fff', borderRadius: 6, paddingInline: 18, letterSpacing: 1 }}>Ingresar</Link>
+          </div>
+        </div>
+
+        {/* Mobile (< md): brand + toggler y collapse centrado */}
+        <nav className="navbar navbar-light d-flex d-md-none align-items-center" style={{ paddingTop: 10, paddingBottom: 10 }}>
+          <Link className="navbar-brand d-flex align-items-center" to="/">
+            <img src={logo} alt="Green Pass" style={{ height: 40 }} />
+          </Link>
           <button
             className="navbar-toggler ms-auto"
             type="button"
             aria-label="Toggle navigation"
-            onClick={() => setOpen(!open)}
+            data-bs-toggle="collapse"
+            data-bs-target="#mobileNav"
             style={{ border: '1px solid rgba(0,0,0,0.2)' }}
           >
             <span className="navbar-toggler-icon" />
           </button>
 
-          <div className={`collapse navbar-collapse ${open ? 'show' : ''}`}>
-            <ul className="navbar-nav mx-auto align-items-center" style={{ gap: 18 }}>
-              <li className="nav-item">
-                <a href="#work" className="nav-link text-uppercase fw-semibold" style={{ letterSpacing: 2, fontSize: 14 }} onClick={() => setOpen(false)}>Experiencias</a>
-              </li>
-              <li className="nav-item">
-                <a href="#about" className="nav-link text-uppercase fw-semibold" style={{ letterSpacing: 2, fontSize: 14 }} onClick={() => setOpen(false)}>Sobre nosotros</a>
-              </li>
-            </ul>
+          <div id="mobileNav" className="collapse navbar-collapse">
+            <div className="d-flex flex-column align-items-center w-100">
+              <ul className="navbar-nav w-100 align-items-center justify-content-center text-center" style={{ gap: 12 }}>
+                <li className="nav-item">
+                  <a href="#work" className="nav-link w-100 text-center text-uppercase fw-semibold" style={{ letterSpacing: 2, fontSize: 14 }} data-bs-toggle="collapse" data-bs-target="#mobileNav">Experiencias</a>
+                </li>
+                <li className="nav-item">
+                  <a href="#about" className="nav-link w-100 text-center text-uppercase fw-semibold" style={{ letterSpacing: 2, fontSize: 14 }} data-bs-toggle="collapse" data-bs-target="#mobileNav">Sobre nosotros</a>
+                </li>
+              </ul>
 
-            <div className="d-flex align-items-center ms-md-3 mt-3 mt-md-0 ms-auto" style={{ gap: 12 }}>
-              <a href="https://www.instagram.com/greenpassok?igsh=andibzQ5OWE2cGFy" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-dark" onClick={() => setOpen(false)}><FaInstagram size={18} /></a>
-              <Link to="/login" className="btn btn-sm" style={{ backgroundColor: '#1a7f4b', color: '#fff', borderRadius: 6, paddingInline: 16, letterSpacing: 1 }} onClick={() => setOpen(false)}>Ingresar</Link>
+              <div className="d-flex align-items-center mt-3 w-100 justify-content-center" style={{ gap: 14 }}>
+                <a href="https://www.instagram.com/greenpassok?igsh=andibzQ5OWE2cGFy" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-dark" data-bs-toggle="collapse" data-bs-target="#mobileNav"><FaInstagram size={22} /></a>
+                <Link to="/login" className="btn btn-sm" style={{ backgroundColor: '#1a7f4b', color: '#fff', borderRadius: 6, paddingInline: 18, letterSpacing: 1 }} data-bs-toggle="collapse" data-bs-target="#mobileNav">Ingresar</Link>
+              </div>
             </div>
           </div>
-        </div>
-      </nav>
+        </nav>
+      </div>
     </header>
   );
 }
