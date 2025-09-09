@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from "react";
+import AdminLayout from "../components/AdminLayout.jsx";
+import api from "../api/client";
 
 const AdminCrearUsuario = () => {
   const [form, setForm] = useState({
@@ -16,13 +18,12 @@ const AdminCrearUsuario = () => {
 
   const [paquetes, setPaquetes] = useState([]);
   const [mensaje, setMensaje] = useState("");
-  const API_URL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     if (form.role === "cliente") {
-      fetch(`${API_URL}/api/paquetes`)
-        .then((res) => res.json())
-        .then((data) => setPaquetes(data))
+      api
+        .get(`/paquetes`)
+        .then((res) => setPaquetes(res.data))
         .catch((err) => console.error("Error al cargar paquetes:", err));
     }
   }, [form.role]);
@@ -45,14 +46,8 @@ const AdminCrearUsuario = () => {
     };
 
     try {
-      const res = await fetch(`${API_URL}/api/users`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(body),
-      });
-
-      const data = await res.json();
-      if (res.ok) {
+      const res = await api.post(`/users`, body);
+      if (res.status >= 200 && res.status < 300) {
         setMensaje("✅ Usuario creado correctamente");
         setForm({
           nombre: "",
@@ -67,7 +62,7 @@ const AdminCrearUsuario = () => {
           role: "cliente",
         });
       } else {
-        setMensaje("❌ " + (data.error || "Error al crear usuario"));
+        setMensaje("❌ Error al crear usuario");
       }
     } catch (err) {
       console.error(err);
@@ -76,11 +71,7 @@ const AdminCrearUsuario = () => {
   };
 
   return (
-    <div className="container mt-5 mb-5 text-center">
-      <h2 className="mb-4">
-        <span role="img" aria-label="icon">👤</span> Crear Usuario
-      </h2>
-
+    <AdminLayout title="👤 Crear Usuario" breadcrumbs={[{ label: "Usuarios", to: "/admin/usuarios" }, { label: "Crear", active: true }]}>
       <form onSubmit={handleSubmit} className="mx-auto" style={{ maxWidth: "600px" }}>
         <div className="row g-3 mb-3">
           <div className="col-md-6">
@@ -221,7 +212,7 @@ const AdminCrearUsuario = () => {
           Crear Usuario
         </button>
       </form>
-    </div>
+    </AdminLayout>
   );
 };
 

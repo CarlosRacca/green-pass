@@ -1,6 +1,8 @@
 // scripts/createUser.js
 const bcrypt = require("bcrypt");
-const pool = require("../database.js").default;
+const { Pool } = require('pg');
+require('dotenv').config({ path: require('path').resolve(__dirname, '..', '.env') });
+const pool = new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } });
 
 async function createUser() {
   const email = "admin@greenpass.com";
@@ -19,6 +21,7 @@ async function createUser() {
   );
 
   console.log("Usuario creado");
+  await pool.end();
 }
 
 createUser().catch(console.error);

@@ -32,6 +32,7 @@ const DEFAULT_ALLOWED_ORIGINS = [
   'https://www.greenpass.app',
   'https://greenpass.app',
   'https://admin-2k4m7xgct-carlos-raccas-projects.vercel.app',
+  'https://admin-h6lrbxde1-carlos-raccas-projects.vercel.app',
   'http://localhost:3000',
   'http://127.0.0.1:3000',
   'http://localhost:5173',
@@ -62,8 +63,10 @@ app.options('*', cors(corsOptions));
 app.use(express.json());
 app.use(compression());
 app.use(pinoHttp({
-  autoLogging: true,
-  redact: ['req.headers.authorization']
+  autoLogging: {
+    ignorePaths: ['/api/auth/login']
+  },
+  redact: ['req.headers.authorization', 'req.body.password'],
 }));
 
 // Rate limiting básico
