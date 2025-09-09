@@ -24,6 +24,11 @@ import ClientePanel from "./pages/ClientePanel.jsx";
 import EditarPerfilCliente from "./pages/EditarPerfilCliente.jsx";
 import VerItinerarioCliente from "./pages/VerItinerarioCliente.jsx";
 import SeleccionarPaquete from "./pages/SeleccionarPaquete.jsx";
+import AdminDashboard from "./pages/AdminDashboard.jsx";
+import AdminUsuariosIndex from "./pages/AdminUsuariosIndex.jsx";
+import AdminTorneosIndex from "./pages/AdminTorneosIndex.jsx";
+import AdminConsultasIndex from "./pages/AdminConsultasIndex.jsx";
+import RequireRole from "./components/RequireRole.jsx";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./App.css";
@@ -70,14 +75,39 @@ function App() {
             <Route path="/cliente/panel" element={<ClientePanel />} />
             <Route path="/mi-viaje" element={<MiViaje />} />
             <Route path="/mis-datos" element={<MisDatos />} />
-            <Route path="/admin/consultas" element={isSuperadmin ? <AdminConsultas /> : <Navigate to="/panel" replace />} />
+
+            {/* Nuevo admin in-app */}
+            <Route path="/admin" element={
+              <RequireRole allowed={"superadmin"}>
+                <AdminDashboard />
+              </RequireRole>
+            } />
+            <Route path="/admin/usuarios" element={
+              <RequireRole allowed={"superadmin"}>
+                <AdminUsuariosIndex />
+              </RequireRole>
+            } />
+            <Route path="/admin/torneos" element={
+              <RequireRole allowed={"superadmin"}>
+                <AdminTorneosIndex />
+              </RequireRole>
+            } />
+            <Route path="/admin/consultas" element={
+              <RequireRole allowed={"superadmin"}>
+                <AdminConsultasIndex />
+              </RequireRole>
+            } />
+
+            {/* Rutas existentes */}
+            <Route path="/admin/consultas-old" element={isSuperadmin ? <AdminConsultas /> : <Navigate to="/panel" replace />} />
             <Route path="/admin/viajes" element={isSuperadmin ? <AdminViajes /> : <Navigate to="/panel" replace />} />
             <Route path="/admin/grupos" element={isSuperadmin ? <AdminGrupos /> : <Navigate to="/panel" replace />} />
-            <Route path="/admin/usuarios" element={isSuperadmin ? <AdminUsuarios /> : <Navigate to="/panel" replace />} />
+            <Route path="/admin/usuarios-old" element={isSuperadmin ? <AdminUsuarios /> : <Navigate to="/panel" replace />} />
             <Route path="/admin/torneos/:id" element={<AdminDetalleTorneo />} />
             <Route path="/admin/ver-torneos" element={<AdminVerTorneos />} />
             <Route path="/admin/crear-usuario" element={<AdminCrearUsuario />} />
-            <Route path="/admin/torneos" element={<AdminCrearTorneo />} />
+            <Route path="/admin/torneos-old" element={<AdminCrearTorneo />} />
+
             <Route path="/torneos/:id/cargar-score" element={<CargarScore />} />
             <Route path="/torneos/:id/ranking-final" element={<RankingFinal />} />
             <Route path="/torneos/:id/ranking" element={<RankingDia />} />
