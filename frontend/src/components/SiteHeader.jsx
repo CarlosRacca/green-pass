@@ -50,7 +50,7 @@ export default function SiteHeader() {
             {user ? (
               <>
                 {user.role === 'superadmin' && (
-                  <a href="https://admin-h6lrbxde1-carlos-raccas-projects.vercel.app" target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-outline-success" style={{ borderRadius: 6, paddingInline: 14, letterSpacing: 1 }}>Admin</a>
+                  <Link to="/admin" className="btn btn-sm btn-outline-success" style={{ borderRadius: 6, paddingInline: 14, letterSpacing: 1 }}>Admin</Link>
                 )}
                 <Link to={user.role === 'superadmin' ? '/panel' : '/cliente/panel'} className="btn btn-sm" style={{ backgroundColor: '#1a7f4b', color: '#fff', borderRadius: 6, paddingInline: 14, letterSpacing: 1 }}>Panel</Link>
                 <button onClick={handleLogout} className="btn btn-sm btn-outline-secondary" style={{ borderRadius: 6, paddingInline: 14, letterSpacing: 1 }}>Salir</button>
@@ -95,7 +95,7 @@ export default function SiteHeader() {
                 {user ? (
                   <>
                     {user.role === 'superadmin' && (
-                      <a href="https://admin-h6lrbxde1-carlos-raccas-projects.vercel.app" target="_blank" rel="noopener noreferrer" className="btn btn-sm btn-outline-success" style={{ borderRadius: 6, paddingInline: 14, letterSpacing: 1 }} data-bs-toggle="collapse" data-bs-target="#mobileNav">Admin</a>
+                      <Link to="/admin" className="btn btn-sm btn-outline-success" style={{ borderRadius: 6, paddingInline: 14, letterSpacing: 1 }} data-bs-toggle="collapse" data-bs-target="#mobileNav">Admin</Link>
                     )}
                     <Link to={user.role === 'superadmin' ? '/panel' : '/cliente/panel'} className="btn btn-sm" style={{ backgroundColor: '#1a7f4b', color: '#fff', borderRadius: 6, paddingInline: 14, letterSpacing: 1 }} data-bs-toggle="collapse" data-bs-target="#mobileNav">Panel</Link>
                     <button onClick={handleLogout} className="btn btn-sm btn-outline-secondary" style={{ borderRadius: 6, paddingInline: 14, letterSpacing: 1 }} data-bs-toggle="collapse" data-bs-target="#mobileNav">Salir</button>
