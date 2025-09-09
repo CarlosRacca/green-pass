@@ -1,27 +1,62 @@
-import React from "react";
-import { Link, NavLink } from "react-router-dom";
+import React, { useState } from "react";
+import { NavLink } from "react-router-dom";
+import { Home, Users, MessageSquare, Plane, Trophy, BarChart3, Menu, X } from "lucide-react";
 
-const items = [
-  { to: "/admin", label: "Dashboard" },
-  { to: "/admin/usuarios", label: "Usuarios" },
-  { to: "/admin/torneos", label: "Torneos" },
-  { to: "/admin/consultas", label: "Consultas" },
+const navItems = [
+  { to: "/admin", label: "Dashboard", icon: Home },
+  { to: "/admin/consultas", label: "Consultas", icon: MessageSquare },
+  { to: "/admin/viajes", label: "Viajes Vendidos", icon: Plane },
+  { to: "/admin/usuarios", label: "Usuarios", icon: Users },
+  { to: "/admin/torneos", label: "Torneos", icon: Trophy },
+  { to: "/admin/analytics", label: "Analytics", icon: BarChart3 },
 ];
 
 export default function AdminShell({ children }) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <div className="d-flex" style={{ minHeight: "calc(100vh - 76px)" }}>
-      <aside className="border-end bg-light" style={{ width: 220 }}>
-        <div className="p-3 fw-bold">Green Pass</div>
-        <nav className="nav flex-column">
-          {items.map(i => (
-            <NavLink key={i.to} to={i.to} className={({isActive}) => `nav-link ${isActive ? 'active fw-semibold' : ''}`}>{i.label}</NavLink>
-          ))}
-        </nav>
-      </aside>
-      <main className="flex-grow-1 p-3">
-        {children}
-      </main>
+    <div className="min-h-screen bg-[#f7f7f6]">
+      {/* Header */}
+      <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-black/5">
+        <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between">
+          <button aria-label="Abrir menú" className="md:hidden inline-flex items-center justify-center rounded-md border border-black/10 w-10 h-10" onClick={() => setOpen(!open)}>
+            {open ? <X size={18} /> : <Menu size={18} />}
+          </button>
+          <div className="hidden md:block font-semibold tracking-wide">Green Pass Admin</div>
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center text-sm">SA</div>
+          </div>
+        </div>
+      </header>
+
+      <div className="mx-auto max-w-7xl px-4 grid grid-cols-1 md:grid-cols-[240px_minmax(0,1fr)] gap-0 md:gap-6">
+        {/* Sidebar */}
+        <aside className={`md:sticky md:top-[60px] h-[calc(100vh-60px)] md:h-[calc(100vh-76px)] bg-white md:bg-transparent border-r md:border-0 transition-transform ${open ? 'translate-x-0' : '-translate-x-full md:translate-x-0'} md:transform-none fixed md:static left-0 top-[60px] w-64 md:w-auto`}>
+          <nav className="p-4 md:p-0">
+            <ul className="flex md:block gap-2 md:gap-0">
+              {navItems.map(({ to, label, icon: Icon }) => (
+                <li key={to} className="md:mb-1">
+                  <NavLink
+                    to={to}
+                    onClick={() => setOpen(false)}
+                    className={({ isActive }) => `flex items-center gap-3 px-3 py-2 rounded-md text-sm ${isActive ? 'bg-emerald-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
+                  >
+                    <Icon size={16} />
+                    <span>{label}</span>
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </aside>
+
+        {/* Main content */}
+        <main className="py-4 md:py-6">
+          <div className="bg-white rounded-lg shadow-sm border border-black/5 p-4 md:p-6">
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
   );
 }
