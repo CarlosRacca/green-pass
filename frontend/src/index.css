@@ -1,6 +1,34 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Tokens estilo v0 (simplificado) */
+:root {
+  --gp-bg: #f7f7f6;
+  --gp-card: #ffffff;
+  --gp-border: rgba(0,0,0,0.06);
+  --gp-muted: #6b7280; /* gray-500 */
+  --gp-foreground: #111827; /* gray-900 */
+  --gp-primary: #047857; /* emerald-700 */
+  --gp-primary-foreground: #ffffff;
+}
+
+body {
+  background: var(--gp-bg);
+  color: var(--gp-foreground);
+}
+
+.gp-card {
+  background: var(--gp-card);
+  border: 1px solid var(--gp-border);
+  border-radius: 0.5rem;
+}
+
+.gp-link {
+  color: var(--gp-muted);
+}
+.gp-link:hover { color: var(--gp-foreground); }
+
 body {
   margin: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',

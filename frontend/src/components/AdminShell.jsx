@@ -15,7 +15,7 @@ export default function AdminShell({ children }) {
   const [open, setOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-[#f7f7f6]">
+    <div className="min-h-screen" style={{ background: 'var(--gp-bg)' }}>
       {/* Header */}
       <header className="sticky top-0 z-40 bg-white/90 backdrop-blur border-b border-black/5">
         <div className="mx-auto max-w-7xl px-4 py-3 flex items-center justify-between gap-3">
@@ -47,7 +47,7 @@ export default function AdminShell({ children }) {
                   <NavLink
                     to={to}
                     onClick={() => setOpen(false)}
-                    className={({ isActive }) => `flex items-center gap-3 px-3 py-2 rounded-md text-sm ${isActive ? 'bg-emerald-600 text-white' : 'text-gray-700 hover:bg-gray-100'}`}
+                    className={({ isActive }) => `flex items-center gap-3 px-3 py-2 rounded-md text-sm ${isActive ? 'bg-emerald-600 text-white' : 'gp-link hover:bg-gray-100'}`}
                   >
                     <Icon size={16} />
                     <span>{label}</span>
@@ -60,7 +60,7 @@ export default function AdminShell({ children }) {
 
         {/* Main content */}
         <main className="py-4 md:py-6">
-          <div className="bg-white rounded-lg shadow-sm border border-black/5 p-4 md:p-6">
+          <div className="gp-card p-4 md:p-6">
             {children}
           </div>
         </main>
