@@ -151,6 +151,7 @@ const resources = {
         includes: 'Incluye:',
         reveal_price: 'Descubrí el valor aproximado',
         per_person: 'por persona',
+        register_error: 'No se pudo registrar la visualización',
       },
     }
   },
@@ -258,6 +259,7 @@ const resources = {
         includes: 'Includes:',
         reveal_price: 'Reveal approximate price',
         per_person: 'per person',
+        register_error: 'Unable to register view',
       },
     }
   }

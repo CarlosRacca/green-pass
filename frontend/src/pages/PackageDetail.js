@@ -31,8 +31,11 @@ const PackageDetail = () => {
         body: JSON.stringify({ paquete: paquete.title }),
       });
     } catch (err) {
-      setError(t('package.register_error') || "No se pudo registrar la consulta");
-      console.error("Error al registrar la consulta:", err);
+      // Silenciar error de tracking en producción para no mostrar alerta al usuario
+      if (process.env.NODE_ENV === 'development') {
+        setError(t('package.register_error', { defaultValue: "No se pudo registrar la consulta" }));
+      }
+      try { console.warn("Notify package view failed:", err); } catch {}
     }
   };
 
