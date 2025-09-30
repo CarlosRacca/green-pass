@@ -3,6 +3,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Plane, Calendar, Users, DollarSign, Eye, Edit, CheckCircle } from "lucide-react"
+import { useI18n } from '@/contexts/i18n-context'
 
 const viajes = [
   {
@@ -102,6 +103,7 @@ const getCategoriaColor = (categoria: string) => {
 }
 
 export default function ViajesPage() {
+  const { t } = useI18n()
   const totalIngresos = viajes.reduce((acc, viaje) => acc + viaje.precio * viaje.participantes, 0)
   const totalComisiones = viajes.reduce((acc, viaje) => acc + viaje.comision, 0)
 
@@ -109,12 +111,12 @@ export default function ViajesPage() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Viajes Vendidos</h1>
-          <p className="text-muted-foreground">Gestiona todos los paquetes de viaje de golf</p>
+          <h1 className="text-3xl font-bold text-foreground">{t('sold_trips')}</h1>
+          <p className="text-muted-foreground">{t('manage_travels')}</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline">Exportar Reporte</Button>
-          <Button>Crear Nuevo Viaje</Button>
+          <Button variant="outline">{t('export_report')}</Button>
+          <Button>{t('create_travel')}</Button>
         </div>
       </div>
 
@@ -126,7 +128,7 @@ export default function ViajesPage() {
               <Plane className="h-4 w-4 text-primary" />
               <div>
                 <p className="text-2xl font-bold">{viajes.length}</p>
-                <p className="text-xs text-muted-foreground">Total Viajes</p>
+                <p className="text-xs text-muted-foreground">{t('total_trips')}</p>
               </div>
             </div>
           </CardContent>
@@ -137,7 +139,7 @@ export default function ViajesPage() {
               <Users className="h-4 w-4 text-blue-500" />
               <div>
                 <p className="text-2xl font-bold">{viajes.reduce((acc, v) => acc + v.participantes, 0)}</p>
-                <p className="text-xs text-muted-foreground">Total Viajeros</p>
+                <p className="text-xs text-muted-foreground">{t('total_travelers')}</p>
               </div>
             </div>
           </CardContent>
@@ -148,7 +150,7 @@ export default function ViajesPage() {
               <DollarSign className="h-4 w-4 text-green-500" />
               <div>
                 <p className="text-2xl font-bold">${totalIngresos.toLocaleString()}</p>
-                <p className="text-xs text-muted-foreground">Ingresos Totales</p>
+                <p className="text-xs text-muted-foreground">{t('total_revenue')}</p>
               </div>
             </div>
           </CardContent>
@@ -159,7 +161,7 @@ export default function ViajesPage() {
               <CheckCircle className="h-4 w-4 text-yellow-500" />
               <div>
                 <p className="text-2xl font-bold">${totalComisiones.toLocaleString()}</p>
-                <p className="text-xs text-muted-foreground">Comisiones</p>
+                <p className="text-xs text-muted-foreground">{t('commissions')}</p>
               </div>
             </div>
           </CardContent>
@@ -242,7 +244,7 @@ export default function ViajesPage() {
 
               {/* Incluye */}
               <div className="mb-4">
-                <p className="text-sm font-medium mb-2">Incluye:</p>
+                <p className="text-sm font-medium mb-2">{t('includes')}</p>
                 <div className="flex flex-wrap gap-1">
                   {viaje.incluye.map((item, index) => (
                     <Badge key={index} variant="outline" className="text-xs">
@@ -255,14 +257,14 @@ export default function ViajesPage() {
               <div className="flex gap-2">
                 <Button size="sm">
                   <Eye className="w-4 h-4 mr-2" />
-                  Ver Detalles
+                  {t('view_details')}
                 </Button>
                 <Button variant="outline" size="sm">
                   <Edit className="w-4 h-4 mr-2" />
-                  Editar
+                  {t('edit')}
                 </Button>
                 <Button variant="outline" size="sm">
-                  Ver Participantes
+                  {t('view_participants')}
                 </Button>
               </div>
             </CardContent>

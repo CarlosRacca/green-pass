@@ -5,12 +5,14 @@ import { paquetes } from "../data/paquetes.js";
 import { FaCheckCircle } from "react-icons/fa";
 import AdminContacts from "./AdminContacts.js";
 import AdminConsultas from "./AdminConsultas.js";
+import { useTranslation } from 'react-i18next';
 
 const PackageDetail = () => {
   const { packageId } = useParams();
   const navigate = useNavigate();
   const location = useLocation();
   const isAdminRoute = location.pathname === "/admin";
+  const { t, i18n } = useTranslation();
 
   const [mostrarPrecio, setMostrarPrecio] = useState(false);
   const [error, setError] = useState("");
@@ -29,7 +31,7 @@ const PackageDetail = () => {
         body: JSON.stringify({ paquete: paquete.title }),
       });
     } catch (err) {
-      setError("No se pudo registrar la consulta");
+      setError(t('package.register_error') || "No se pudo registrar la consulta");
       console.error("Error al registrar la consulta:", err);
     }
   };
@@ -43,13 +45,13 @@ const PackageDetail = () => {
           className={`btn ${activeTab === "admin" ? "btn-primary" : "btn-outline-primary"} focus-outline-none`}
           onClick={() => setActiveTab("admin")}
         >
-          Ver contactos
+          {t('package.view_contacts') || 'Ver contactos'}
         </button>
         <button
           className={`btn ${activeTab === "consultas" ? "btn-primary" : "btn-outline-primary"} focus-outline-none`}
           onClick={() => setActiveTab("consultas")}
         >
-          Ver consultas
+          {t('package.view_queries') || 'Ver consultas'}
         </button>
       </div>
     );
@@ -76,12 +78,12 @@ const PackageDetail = () => {
   if (!paquete) {
     return (
       <div className="container py-5 text-center">
-        <h2>Paquete no encontrado</h2>
+        <h2>{t('package.not_found') || 'Paquete no encontrado'}</h2>
         <button
           className="btn btn-outline-secondary mt-3"
           onClick={() => navigate("/")}
         >
-          Volver al inicio
+          {t('package.back_home') || 'Volver al inicio'}
         </button>
       </div>
     );
@@ -93,26 +95,30 @@ const PackageDetail = () => {
     <motion.div className="container py-5" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.15 }}>
       {renderTabs()}
 
-      <button
-        className="btn btn-outline-dark mb-4 px-4 rounded-pill"
-        onClick={() => navigate("/")}
-      >
-        ← Volver al inicio
-      </button>
+      {/* Título centrado sobre ambas columnas */}
+      <h1 className="text-center text-success fw-bold mb-4">{paquete.title}</h1>
 
-      <div className="row align-items-center g-5">
-        <div className="col-md-6">
+      <div className="row align-items-stretch g-5">
+        <div className="col-md-6 d-flex flex-column">
           <img
             src={paquete.image}
             alt={paquete.detail.alt}
             className="img-fluid rounded shadow-lg"
           />
+          {/* Descripción breve debajo de la foto */}
+          <p className="lead text-muted mt-3">{paquete.detail.descripcion}</p>
+          {/* Botón volver debajo de la descripción */}
+          <div className="mt-auto">
+            <button
+              className="btn btn-success btn-lg shadow-sm px-4"
+              onClick={() => navigate("/")}
+            >
+              ← {t('package.back_home') || 'Volver al inicio'}
+            </button>
+          </div>
         </div>
-        <div className="col-md-6">
-          <h1 className="mb-3 text-success fw-bold">{paquete.title}</h1>
-          <p className="lead text-muted">{paquete.detail.descripcion}</p>
-
-          <h5 className="mt-4 mb-3">Incluye:</h5>
+        <div className="col-md-6 d-flex flex-column">
+          <h5 className="mt-0 mb-3">{t('package.includes') || 'Incluye:'}</h5>
           <ul className="list-group list-group-flush mb-4">
             {paquete.detail.servicios.map((s, i) => (
               <li key={i} className="list-group-item d-flex align-items-start gap-2">
@@ -122,18 +128,20 @@ const PackageDetail = () => {
             ))}
           </ul>
 
-          {!mostrarPrecio ? (
+          <div className="mt-auto">
             <button
               className="btn btn-success btn-lg shadow-sm px-4"
               onClick={handlePrecio}
             >
-              Descubrí el valor aproximado
+              {t('package.reveal_price') || 'Descubrí el valor aproximado'}
             </button>
-          ) : (
-            <div className="alert alert-success text-center fw-bold fs-4">
-              {paquete.precio}
-            </div>
-          )}
+
+            {mostrarPrecio && (
+              <div className="alert alert-success text-center fw-bold fs-4 mt-3">
+                {new Intl.NumberFormat(i18n.language, { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(paquete.priceUSD ?? 0)} {t('package.per_person')}
+              </div>
+            )}
+          </div>
 
           {error && <div className="alert alert-danger mt-3">{error}</div>}
         </div>

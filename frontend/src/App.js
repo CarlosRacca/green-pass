@@ -24,6 +24,7 @@ import ClientePanel from "./pages/ClientePanel.jsx";
 import EditarPerfilCliente from "./pages/EditarPerfilCliente.jsx";
 import VerItinerarioCliente from "./pages/VerItinerarioCliente.jsx";
 import SeleccionarPaquete from "./pages/SeleccionarPaquete.jsx";
+import RedirectToAdmin from "./components/RedirectToAdmin.jsx";
 import AdminDashboard from "./pages/AdminDashboard.jsx";
 import AdminUsuariosIndex from "./pages/AdminUsuariosIndex.jsx";
 import AdminTorneosIndex from "./pages/AdminTorneosIndex.jsx";
@@ -33,12 +34,30 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import "./App.css";
 import { AuthContext } from "./context/AuthContext.jsx";
+import { useEffect } from "react";
 
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
   const path = location.pathname;
   const { user, setUser } = useContext(AuthContext);
+
+  // Redirección global: cualquier ruta de panel/cliente del CRA va al admin Next
+  useEffect(() => {
+    const shouldGoAdmin =
+      path.startsWith('/panel') ||
+      path.startsWith('/cliente') ||
+      path.startsWith('/mi-viaje') ||
+      path.startsWith('/mis-datos') ||
+      path.startsWith('/torneos/') ||
+      path.startsWith('/cliente/torneo') ||
+      path.startsWith('/cliente/perfil') ||
+      path.startsWith('/cliente/itinerario') ||
+      path.startsWith('/cliente/seleccionar-paquete');
+    if (shouldGoAdmin) {
+      navigate('/admin', { replace: true });
+    }
+  }, [path, navigate]);
 
   const handleLogout = () => {
     localStorage.clear();
@@ -71,17 +90,16 @@ function App() {
                 )
               }
             />
-            <Route path="/panel" element={<UserPanel />} />
-            <Route path="/cliente/panel" element={<ClientePanel />} />
-            <Route path="/mi-viaje" element={<MiViaje />} />
-            <Route path="/mis-datos" element={<MisDatos />} />
+            {/* Redirecciones: toda área privada propia migra al admin Next */}
+            <Route path="/panel" element={<Navigate to="/admin" replace />} />
+            <Route path="/cliente/panel" element={<Navigate to="/admin" replace />} />
+            <Route path="/cliente/*" element={<Navigate to="/admin" replace />} />
+            <Route path="/mi-viaje" element={<Navigate to="/admin" replace />} />
+            <Route path="/mis-datos" element={<Navigate to="/admin" replace />} />
 
             {/* Nuevo admin in-app */}
-            <Route path="/admin" element={
-              <RequireRole allowed={"superadmin"}>
-                <AdminDashboard />
-              </RequireRole>
-            } />
+            {/* Enviar todo /admin al proxy → Next */}
+            <Route path="/admin-next/*" element={<RedirectToAdmin />} />
             <Route path="/admin/usuarios" element={
               <RequireRole allowed={"superadmin"}>
                 <AdminUsuariosIndex />
@@ -108,13 +126,13 @@ function App() {
             <Route path="/admin/crear-usuario" element={<AdminCrearUsuario />} />
             <Route path="/admin/torneos-old" element={<AdminCrearTorneo />} />
 
-            <Route path="/torneos/:id/cargar-score" element={<CargarScore />} />
-            <Route path="/torneos/:id/ranking-final" element={<RankingFinal />} />
-            <Route path="/torneos/:id/ranking" element={<RankingDia />} />
-            <Route path="/cliente/torneo/:id" element={<ClienteVerTorneo />} />
-            <Route path="/cliente/perfil" element={<EditarPerfilCliente />} />
-            <Route path="/cliente/itinerario/:paqueteId" element={<VerItinerarioCliente />} />
-            <Route path="/cliente/seleccionar-paquete" element={<SeleccionarPaquete />} />
+            <Route path="/torneos/:id/cargar-score" element={<Navigate to="/admin" replace />} />
+            <Route path="/torneos/:id/ranking-final" element={<Navigate to="/admin" replace />} />
+            <Route path="/torneos/:id/ranking" element={<Navigate to="/admin" replace />} />
+            <Route path="/cliente/torneo/:id" element={<Navigate to="/admin" replace />} />
+            <Route path="/cliente/perfil" element={<Navigate to="/admin" replace />} />
+            <Route path="/cliente/itinerario/:paqueteId" element={<Navigate to="/admin" replace />} />
+            <Route path="/cliente/seleccionar-paquete" element={<Navigate to="/admin" replace />} />
         </Routes>
       </main>
 

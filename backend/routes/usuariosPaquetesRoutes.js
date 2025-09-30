@@ -33,15 +33,30 @@ router.get("/:id", async (req, res) => {
 
 // ✅ POST - Crear nuevo registro
 router.post("/", async (req, res) => {
-  const { user_id, paquete_id, puntos } = req.body;
+  const { user_id, paquete_id, fecha_compra } = req.body;
   try {
     const result = await pool.query(
-      `INSERT INTO usuarios_paquetes (user_id, paquete_id, puntos)
-       VALUES ($1, $2, $3) RETURNING *`,
-      [user_id, paquete_id, puntos || 0]
+      `INSERT INTO usuarios_paquetes (user_id, paquete_id, fecha_compra)
+       VALUES ($1, $2, COALESCE($3::timestamp, NOW())) RETURNING *`,
+      [user_id, paquete_id, fecha_compra || null]
     );
     res.status(201).json(result.rows[0]);
   } catch (error) {
+    if (error && error.code === '23505') {
+      try {
+        await pool.query(
+          `SELECT setval('usuarios_paquetes_id_seq', COALESCE((SELECT MAX(id)+1 FROM usuarios_paquetes), 1), false)`
+        );
+        const retry = await pool.query(
+          `INSERT INTO usuarios_paquetes (user_id, paquete_id, fecha_compra)
+           VALUES ($1, $2, COALESCE($3::timestamp, NOW())) RETURNING *`,
+          [user_id, paquete_id, fecha_compra || null]
+        );
+        return res.status(201).json(retry.rows[0]);
+      } catch (e2) {
+        console.error('Retry usuarios_paquetes failed:', e2);
+      }
+    }
     console.error("Error al crear usuario_paquete:", error);
     res.status(500).json({ error: "Error al crear registro" });
   }
@@ -50,12 +65,12 @@ router.post("/", async (req, res) => {
 // ✅ PUT - Actualizar
 router.put("/:id", async (req, res) => {
   const { id } = req.params;
-  const { user_id, paquete_id, puntos } = req.body;
+  const { user_id, paquete_id, fecha_compra } = req.body;
   try {
     const result = await pool.query(
-      `UPDATE usuarios_paquetes SET user_id = $1, paquete_id = $2, puntos = $3
+      `UPDATE usuarios_paquetes SET user_id = $1, paquete_id = $2, fecha_compra = $3
        WHERE id = $4 RETURNING *`,
-      [user_id, paquete_id, puntos, id]
+      [user_id, paquete_id, fecha_compra || new Date(), id]
     );
     if (result.rows.length === 0)
       return res.status(404).json({ error: "Registro no encontrado" });

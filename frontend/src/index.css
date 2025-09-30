@@ -11,6 +11,8 @@
   --gp-foreground: #111827; /* gray-900 */
   --gp-primary: #047857; /* emerald-700 */
   --gp-primary-foreground: #ffffff;
+  /* Altura del header sticky para offset de scroll */
+  --gp-header-offset: 72px;
 }
 
 body {
@@ -42,13 +44,13 @@ html {
   scroll-behavior: smooth;
 }
 
-/* Anchor offset for sticky header */
-section[id]::before {
-  content: "";
-  display: block;
-  height: 72px;
-  margin-top: -72px;
-  visibility: hidden;
+/* Offset moderno para sticky headers */
+section[id] {
+  scroll-margin-top: var(--gp-header-offset);
+}
+
+@media (max-width: 768px) {
+  :root { --gp-header-offset: 64px; }
 }
 
 code {

@@ -2,9 +2,11 @@ import React, { useContext } from "react";
 import { Link } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext.jsx";
 import { motion } from "framer-motion";
+import { useTranslation } from 'react-i18next';
 
 export default function HomeLoginCTA() {
   const { user } = useContext(AuthContext);
+  const { t } = useTranslation();
   if (user) return null;
 
   return (
@@ -18,11 +20,11 @@ export default function HomeLoginCTA() {
           transition={{ duration: 0.5 }}
         >
           <div className="me-md-3 text-center text-md-start">
-            <h3 className="fw-bold mb-2">Accedé a tu experiencia</h3>
-            <p className="text-muted mb-0">Ingresá para ver tus viajes, itinerarios y beneficios exclusivos.</p>
+            <h3 className="fw-bold mb-2">{t('cta.access_title') || 'Accedé a tu experiencia'}</h3>
+            <p className="text-muted mb-0">{t('cta.access_sub') || 'Ingresá para ver tus viajes, itinerarios y beneficios exclusivos.'}</p>
           </div>
           <div className="mt-3 mt-md-0">
-            <Link to="/login" className="btn btn-success px-4 py-2">Ingresar</Link>
+            <button className="btn btn-outline-secondary px-4 py-2" disabled>{t('coming_soon')}</button>
           </div>
         </motion.div>
       </div>

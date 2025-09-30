@@ -98,7 +98,8 @@ const getEstadoBadge = (estado: string) => {
   }
 }
 
-export default function ResponderConsultaPage({ params }: { params: { id: string } }) {
+export default async function ResponderConsultaPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const [respuesta, setRespuesta] = useState("")
   const [plantillaSeleccionada, setPlantillaSeleccionada] = useState("")
   const [marcarComoResuelta, setMarcarComoResuelta] = useState(true)
@@ -130,7 +131,7 @@ export default function ResponderConsultaPage({ params }: { params: { id: string
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Link href={`/consultas/${params.id}`}>
+              <Link href={`/consultas/${id}`}>
           <Button variant="outline" size="icon">
             <ArrowLeft className="h-4 w-4" />
           </Button>

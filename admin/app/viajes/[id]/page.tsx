@@ -117,7 +117,8 @@ const getCategoriaColor = (categoria: string) => {
   }
 }
 
-export default function DetalleViajePage({ params }: { params: { id: string } }) {
+export default async function DetalleViajePage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const porcentajeOcupacion = (viaje.participantes / viaje.maxParticipantes) * 100
 
   return (
@@ -133,13 +134,13 @@ export default function DetalleViajePage({ params }: { params: { id: string } })
           <p className="text-muted-foreground">Información completa del paquete</p>
         </div>
         <div className="flex gap-2">
-          <Link href={`/viajes/${params.id}/participantes`}>
+          <Link href={`/viajes/${id}/participantes`}>
             <Button variant="outline">
               <Users className="h-4 w-4 mr-2" />
               Ver Participantes
             </Button>
           </Link>
-          <Link href={`/viajes/${params.id}/editar`}>
+          <Link href={`/viajes/${id}/editar`}>
             <Button>
               <Edit className="h-4 w-4 mr-2" />
               Editar Viaje
@@ -283,7 +284,7 @@ export default function DetalleViajePage({ params }: { params: { id: string } })
                 ))}
               </div>
               <Separator className="my-4" />
-              <Link href={`/viajes/${params.id}/participantes`}>
+              <Link href={`/viajes/${id}/participantes`}>
                 <Button variant="outline" className="w-full bg-transparent">
                   Ver Todos los Participantes ({viaje.participantes})
                 </Button>

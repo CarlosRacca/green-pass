@@ -1,14 +1,16 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { FaGolfBallTee, FaPlaneDeparture, FaHotel } from "react-icons/fa6";
-
-const steps = [
-  { icon: <FaGolfBallTee size={28} />, title: "Elegí tu destino", text: "Seleccioná entre nuestras experiencias premium de golf." },
-  { icon: <FaPlaneDeparture size={28} />, title: "Nos ocupamos", text: "Traslados, reservas y organización completa del viaje." },
-  { icon: <FaHotel size={28} />, title: "Disfrutá a pleno", text: "Hospedaje, canchas top y gastronomía en un solo lugar." },
-];
+import { useTranslation } from 'react-i18next';
 
 export default function HomeHowItWorks() {
+  const { t } = useTranslation();
+  const steps = [
+    { icon: <FaGolfBallTee size={28} />, title: t('how.step1.title'), text: t('how.step1.text') },
+    { icon: <FaPlaneDeparture size={28} />, title: t('how.step2.title'), text: t('how.step2.text') },
+    { icon: <FaHotel size={28} />, title: t('how.step3.title'), text: t('how.step3.text') },
+  ];
+
   return (
     <section className="py-5 bg-light">
       <div className="container">
@@ -19,7 +21,7 @@ export default function HomeHowItWorks() {
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
         >
-          ¿Cómo funciona?
+          {t('how.title')}
         </motion.h2>
         <div className="row g-4">
           {steps.map((s, i) => (

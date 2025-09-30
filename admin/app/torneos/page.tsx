@@ -1,143 +1,208 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Trophy, Calendar, MapPin, Users, DollarSign, Edit, Eye } from "lucide-react"
+'use client'
 
-const torneos = [
-  {
-    id: 1,
-    nombre: "Torneo de Primavera 2024",
-    descripcion: "Torneo anual de primavera en el prestigioso club de golf",
-    fecha: "2024-03-15",
-    ubicacion: "Club de Golf San Andrés",
-    participantes: 45,
-    maxParticipantes: 60,
-    precio: 15000,
-    estado: "abierto",
-    categoria: "Amateur",
-  },
-  {
-    id: 2,
-    nombre: "Copa Green Pass",
-    descripcion: "Torneo exclusivo para miembros premium",
-    fecha: "2024-04-20",
-    ubicacion: "Olivos Golf Club",
-    participantes: 32,
-    maxParticipantes: 40,
-    precio: 25000,
-    estado: "confirmado",
-    categoria: "Premium",
-  },
-  {
-    id: 3,
-    nombre: "Torneo Benéfico",
-    descripcion: "Torneo a beneficio de fundaciones locales",
-    fecha: "2024-02-10",
-    ubicacion: "Jockey Club",
-    participantes: 60,
-    maxParticipantes: 60,
-    precio: 12000,
-    estado: "finalizado",
-    categoria: "Benéfico",
-  },
-]
-
-const getEstadoBadge = (estado: string) => {
-  switch (estado) {
-    case "abierto":
-      return <Badge variant="default">Abierto</Badge>
-    case "confirmado":
-      return <Badge variant="secondary">Confirmado</Badge>
-    case "finalizado":
-      return <Badge variant="outline">Finalizado</Badge>
-    case "cancelado":
-      return <Badge variant="destructive">Cancelado</Badge>
-    default:
-      return <Badge variant="outline">{estado}</Badge>
-  }
-}
-
-const getCategoriaColor = (categoria: string) => {
-  switch (categoria) {
-    case "Premium":
-      return "border-l-yellow-500"
-    case "Amateur":
-      return "border-l-green-500"
-    case "Benéfico":
-      return "border-l-blue-500"
-    default:
-      return "border-l-gray-300"
-  }
-}
+import { useState } from 'react'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Badge } from '@/components/ui/badge'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { Trophy, Search, Plus, Calendar, MapPin, Users, DollarSign, MoreHorizontal, Edit, Trash2 } from 'lucide-react'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import Link from 'next/link'
+import Image from 'next/image'
+import { useTournaments } from '@/hooks/use-api'
+import type { Tournament } from '@/lib/types'
+import { useI18n } from '@/contexts/i18n-context'
 
 export default function TorneosPage() {
+  const { tournaments, isLoading } = useTournaments()
+  const { t } = useI18n()
+  const [searchTerm, setSearchTerm] = useState('')
+  const [statusFilter, setStatusFilter] = useState<string>('all')
+
+  const getStatusBadge = (status: Tournament['status']) => {
+    const variants = {
+      open: { variant: 'default' as const, label: t('open') },
+      closed: { variant: 'secondary' as const, label: t('closed') },
+      completed: { variant: 'outline' as const, label: t('completed') },
+      cancelled: { variant: 'destructive' as const, label: t('cancelled') },
+      draft: { variant: 'secondary' as const, label: t('draft') },
+      in_progress: { variant: 'default' as const, label: t('in_progress') },
+      full: { variant: 'secondary' as const, label: t('full') },
+    }
+    const config = variants[status]
+    return <Badge variant={config.variant}>{config.label}</Badge>
+  }
+
+  const filteredTournaments =
+    tournaments?.filter(tournament => {
+      const matchesSearch =
+        tournament.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        tournament.location.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchesStatus = statusFilter === 'all' || tournament.status === statusFilter
+      return matchesSearch && matchesStatus
+    }) || []
+
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="h-8 w-48 bg-gray-200 rounded animate-pulse" />
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {[...Array(6)].map((_, i) => (
+            <Card key={i}>
+              <CardContent className="p-6">
+                <div className="space-y-3">
+                  <div className="h-32 w-full bg-gray-200 rounded animate-pulse" />
+                  <div className="h-4 w-3/4 bg-gray-200 rounded animate-pulse" />
+                  <div className="h-3 w-1/2 bg-gray-200 rounded animate-pulse" />
+                </div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Torneos</h1>
-          <p className="text-muted-foreground">Gestiona todos los torneos de golf</p>
+          <h1 className="text-3xl font-bold tracking-tight">{t('tournaments')}</h1>
+          <p className="text-muted-foreground">&nbsp;</p>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline">Filtrar</Button>
-          <Button>Crear Torneo</Button>
-        </div>
+        <Button asChild>
+          <Link href="/torneos/crear">
+            <Plus className="mr-2 h-4 w-4" />
+            {t('create')}
+          </Link>
+        </Button>
       </div>
 
-      <div className="grid gap-4">
-        {torneos.map((torneo) => (
-          <Card key={torneo.id} className={`border-l-4 ${getCategoriaColor(torneo.categoria)}`}>
-            <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <Trophy className="w-5 h-5 text-primary" />
-                    <CardTitle className="text-xl">{torneo.nombre}</CardTitle>
-                  </div>
-                  <CardDescription>{torneo.descripcion}</CardDescription>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline">{torneo.categoria}</Badge>
-                  {getEstadoBadge(torneo.estado)}
-                </div>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Calendar className="w-4 h-4" />
-                  {torneo.fecha}
-                </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <MapPin className="w-4 h-4" />
-                  {torneo.ubicacion}
-                </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <Users className="w-4 h-4" />
-                  {torneo.participantes}/{torneo.maxParticipantes} participantes
-                </div>
-                <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <DollarSign className="w-4 h-4" />${torneo.precio.toLocaleString()}
-                </div>
-              </div>
+      <div className="grid gap-4 md:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('total_tournaments')}</CardTitle>
+            <Trophy className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{tournaments?.length || 0}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('open_plural')}</CardTitle>
+            <Trophy className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{tournaments?.filter(t => t.status === 'open').length || 0}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('participants')}</CardTitle>
+            <Users className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{tournaments?.reduce((acc, t) => acc + t.currentParticipants, 0) || 0}</div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">{t('revenue')}</CardTitle>
+            <DollarSign className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">
+              ${tournaments?.reduce((acc, t) => acc + t.price * t.currentParticipants, 0).toLocaleString() || 0}
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
-              <div className="flex gap-2">
-                <Button size="sm">
-                  <Eye className="w-4 h-4 mr-2" />
-                  Ver Detalles
-                </Button>
-                <Button variant="outline" size="sm">
-                  <Edit className="w-4 h-4 mr-2" />
-                  Editar
-                </Button>
-                <Button variant="outline" size="sm">
-                  Ver Participantes
+      <Card>
+        <CardContent className="p-6">
+          <div className="flex flex-col sm:flex-row gap-4">
+            <div className="relative flex-1">
+              <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+              <Input placeholder={t('search_by_name_or_location')} value={searchTerm} onChange={e => setSearchTerm(e.target.value)} className="pl-10" />
+            </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full sm:w-[180px]">
+                <SelectValue placeholder={t('state')} />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">{t('all_statuses')}</SelectItem>
+                <SelectItem value="open">{t('open')}</SelectItem>
+                <SelectItem value="closed">{t('closed')}</SelectItem>
+                <SelectItem value="completed">{t('completed')}</SelectItem>
+                <SelectItem value="cancelled">{t('cancelled')}</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </CardContent>
+      </Card>
+
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {filteredTournaments.map(tournament => (
+          <Card key={tournament.id} className="hover:shadow-md transition-shadow">
+            <CardContent className="p-0">
+              <div className="aspect-video relative overflow-hidden rounded-t-lg">
+                <Image src={tournament.images?.[0] || '/placeholder.svg?height=200&width=400'} alt={tournament.name} fill className="object-cover" />
+                <div className="absolute top-2 right-2">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="secondary" size="sm">
+                        <MoreHorizontal className="h-4 w-4" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuItem asChild>
+                        <Link href={`/torneos/${tournament.id}`}>
+                          <Edit className="mr-2 h-4 w-4" />
+                          Editar
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem className="text-red-600">
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Eliminar
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </div>
+              <div className="p-6 space-y-4">
+                <div className="flex items-start justify-between">
+                  <div>
+                    <h3 className="font-semibold text-lg">{tournament.name}</h3>
+                    <p className="text-sm text-muted-foreground line-clamp-2">{tournament.description}</p>
+                  </div>
+                  {getStatusBadge(tournament.status)}
+                </div>
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <div className="flex items-center gap-2"><Calendar className="h-4 w-4" /><span>{new Date(tournament.startDate).toLocaleDateString()}</span></div>
+                  <div className="flex items-center gap-2"><MapPin className="h-4 w-4" /><span>{tournament.location}</span></div>
+                  <div className="flex items-center gap-2"><Users className="h-4 w-4" /><span>{tournament.currentParticipants}/{tournament.maxParticipants} participantes</span></div>
+                  <div className="flex items-center gap-2"><DollarSign className="h-4 w-4" /><span>${tournament.price.toLocaleString()}</span></div>
+                </div>
+                <Button asChild variant="outline" size="sm" className="w-full">
+                  <Link href={`/torneos/${tournament.id}`}>{t('view_details')}</Link>
                 </Button>
               </div>
             </CardContent>
           </Card>
         ))}
       </div>
+
+      {filteredTournaments.length === 0 && (
+        <Card>
+          <CardContent className="p-12 text-center">
+            <Trophy className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">{t('no_tournaments')}</h3>
+            <p className="text-muted-foreground">{searchTerm || statusFilter !== 'all' ? t('no_tournaments_filters') : t('no_tournaments_empty')}</p>
+          </CardContent>
+        </Card>
+      )}
     </div>
   )
 }

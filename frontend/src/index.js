@@ -10,6 +10,7 @@ import ScrollToTop from './components/ScrollToTop.jsx';
 import ToastProvider from './components/ToastProvider.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import { AuthProvider } from './context/AuthContext.jsx';
+import './i18n.js';
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));

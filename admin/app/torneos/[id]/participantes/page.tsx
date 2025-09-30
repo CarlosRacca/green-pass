@@ -101,7 +101,8 @@ const getHandicapColor = (handicap: number) => {
   return "text-red-600 bg-red-50"
 }
 
-export default function ParticipantesTorneoPage({ params }: { params: { id: string } }) {
+export default async function ParticipantesTorneoPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params
   const torneo = {
     nombre: "Torneo de Primavera 2024",
     participantes: participantes.length,
@@ -117,7 +118,7 @@ export default function ParticipantesTorneoPage({ params }: { params: { id: stri
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-4">
-        <Link href={`/torneos/${params.id}`}>
+        <Link href={`/torneos/${id}`}>
           <Button variant="outline" size="icon">
             <ArrowLeft className="h-4 w-4" />
           </Button>

@@ -18,6 +18,7 @@ import { EventEmitter } from "events";
 import usuariosPaquetesRoutes from "./routes/usuariosPaquetesRoutes.js";
 import viajesRoutes from "./routes/viajesRoutes.js";
 import consultasRoutes from './routes/consultasRoutes.js';
+import handicapRoutes from './routes/handicapRoutes.js';
 import bcrypt from 'bcryptjs';
 
 
@@ -37,6 +38,8 @@ const DEFAULT_ALLOWED_ORIGINS = [
   'http://127.0.0.1:3000',
   'http://localhost:5173',
   'http://127.0.0.1:5173',
+  'http://localhost:3001',
+  'http://127.0.0.1:3001',
 ];
 const ENV_ALLOWED = (process.env.CORS_ORIGINS || '')
   .split(',')
@@ -133,6 +136,9 @@ app.use("/api/usuarios-paquetes", usuariosPaquetesRoutes);
 app.use('/api/consultas', consultasRoutes);
 
 app.use("/api/viajes", viajesRoutes);
+
+// Handicap proxy/lookup
+app.use('/api/handicap', handicapRoutes);
 
 // 404 handler
 app.use((req, res) => {

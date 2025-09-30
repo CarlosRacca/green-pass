@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaInstagram } from "react-icons/fa";
 import logo from "../assets/GP VERDE OSC Y NEGRO.png";
 import { AuthContext } from "../context/AuthContext.jsx";
+import { useTranslation } from 'react-i18next';
 
 export default function SiteHeader() {
   const [open] = useState(false);
@@ -10,17 +11,22 @@ export default function SiteHeader() {
   const { user, setUser } = useContext(AuthContext);
   const location = useLocation();
   const isHome = location.pathname === "/";
+  const { t, i18n } = useTranslation();
 
   const handleLogout = () => {
     try {
       localStorage.clear();
       setUser(null);
       navigate("/");
+      // Clear bridge cookies for Next.js admin
+      document.cookie = 'gp_auth=; Max-Age=0; path=/';
+      document.cookie = 'gp_token=; Max-Age=0; path=/';
+      document.cookie = 'gp_user=; Max-Age=0; path=/';
     } catch {}
   };
 
   return (
-    <header className="site-header fixed-top" style={{ backgroundColor: '#f3f3f1', borderBottom: '1px solid rgba(0,0,0,0.06)', zIndex: 1050 }}>
+    <header className="site-header sticky-top" style={{ backgroundColor: '#f3f3f1', borderBottom: '1px solid rgba(0,0,0,0.06)', zIndex: 1050 }}>
       <div className="container">
         {/* Desktop (>= md): Grid de 3 columnas: logo | centro | acciones */}
         <div className="d-none d-md-grid align-items-center" style={{ gridTemplateColumns: 'auto 1fr auto', display: 'grid', columnGap: 16, paddingTop: 10, paddingBottom: 10 }}>
@@ -34,10 +40,10 @@ export default function SiteHeader() {
             <nav aria-label="Primary" className="d-flex justify-content-center">
               <ul className="list-unstyled d-flex m-0 align-items-center" style={{ gap: 28 }}>
                 <li>
-                  <a href="#work" className="text-decoration-none text-uppercase fw-semibold text-dark" style={{ letterSpacing: 2, fontSize: 14 }}>Experiencias</a>
+                  <a href="#work" className="text-decoration-none text-uppercase fw-semibold text-dark" style={{ letterSpacing: 2, fontSize: 14 }}>{t('nav.experiences')}</a>
                 </li>
                 <li>
-                  <a href="#about" className="text-decoration-none text-uppercase fw-semibold text-dark" style={{ letterSpacing: 2, fontSize: 14 }}>Sobre nosotros</a>
+                  <a href="#about" className="text-decoration-none text-uppercase fw-semibold text-dark" style={{ letterSpacing: 2, fontSize: 14 }}>{t('nav.about')}</a>
                 </li>
               </ul>
             </nav>
@@ -47,17 +53,31 @@ export default function SiteHeader() {
 
           <div className="d-flex align-items-center justify-content-end" style={{ gap: 14 }}>
             <a href="https://www.instagram.com/greenpassok?igsh=andibzQ5OWE2cGFy" target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="text-dark"><FaInstagram size={22} /></a>
+            <div className="d-flex align-items-center" style={{ gap: 10 }}>
+              <div className="btn-group" role="group" aria-label="Language switcher">
+                <button
+                  type="button"
+                  className={`btn btn-sm ${i18n.language?.startsWith('es') ? 'btn-success' : 'btn-outline-success'}`}
+                  onClick={() => i18n.changeLanguage('es')}
+                >ES</button>
+                <button
+                  type="button"
+                  className={`btn btn-sm ${i18n.language?.startsWith('en') ? 'btn-success' : 'btn-outline-success'}`}
+                  onClick={() => i18n.changeLanguage('en')}
+                >EN</button>
+              </div>
             {user ? (
               <>
                 {user.role === 'superadmin' && (
                   <Link to="/admin" className="btn btn-sm btn-outline-success" style={{ borderRadius: 6, paddingInline: 14, letterSpacing: 1 }}>Admin</Link>
                 )}
-                <Link to={user.role === 'superadmin' ? '/panel' : '/cliente/panel'} className="btn btn-sm" style={{ backgroundColor: '#1a7f4b', color: '#fff', borderRadius: 6, paddingInline: 14, letterSpacing: 1 }}>Panel</Link>
+                <Link to={user.role === 'superadmin' ? '/panel' : '/cliente/panel'} className="btn btn-sm" style={{ backgroundColor: '#1a7f4b', color: '#fff', borderRadius: 6, paddingInline: 14, letterSpacing: 1 }}>{t('nav.home')}</Link>
                 <button onClick={handleLogout} className="btn btn-sm btn-outline-secondary" style={{ borderRadius: 6, paddingInline: 14, letterSpacing: 1 }}>Salir</button>
               </>
             ) : (
-              <Link to="/login" className="btn btn-sm" style={{ backgroundColor: '#1a7f4b', color: '#fff', borderRadius: 6, paddingInline: 18, letterSpacing: 1 }}>Ingresar</Link>
+              <button className="btn btn-sm btn-outline-secondary" disabled title={t('coming_soon')}>{t('coming_soon')}</button>
             )}
+            </div>
           </div>
         </div>
 

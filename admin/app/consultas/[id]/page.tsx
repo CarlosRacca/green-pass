@@ -1,170 +1,111 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Separator } from "@/components/ui/separator"
-import { ArrowLeft, Reply, Clock, CheckCircle, AlertCircle, Mail, Phone, User, Calendar } from "lucide-react"
-import Link from "next/link"
+'use client'
 
-// Datos de ejemplo
-const consulta = {
-  id: 1,
-  usuario: {
-    nombre: "Juan Pérez",
-    email: "juan@email.com",
-    telefono: "+54 11 1234-5678",
-    fechaRegistro: "2023-12-15",
-    torneosParticipados: 5,
-    avatar: "/placeholder.svg?height=60&width=60",
-  },
-  asunto: "Consulta sobre torneo de primavera",
-  mensaje: `Hola,
+import { useState } from 'react'
+import { useParams } from 'next/navigation'
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import { ArrowLeft, Send, Mail, Phone, User } from 'lucide-react'
+import Link from 'next/link'
+import { useConsultation } from '@/hooks/use-api'
+import type { Consultation } from '@/lib/types'
 
-Me gustaría saber más detalles sobre el torneo de primavera que organizan. Específicamente:
+export default function ConsultationDetailPage() {
+  const params = useParams()
+  const { consultation, isLoading } = useConsultation(params.id as string)
+  const [response, setResponse] = useState('')
+  const [newStatus, setNewStatus] = useState<Consultation['status']>('new')
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-1. ¿Cuál es el nivel de handicap requerido?
-2. ¿Hay algún descuento para miembros frecuentes?
-3. ¿Incluye almuerzo el precio de inscripción?
-4. ¿Cuál es la política de cancelación?
-
-También me interesa saber si hay disponibilidad para grupos, ya que somos 4 amigos que nos gustaría participar juntos.
-
-Muchas gracias por su tiempo.
-
-Saludos cordiales,
-Juan Pérez`,
-  fechaCreacion: "2024-01-15 10:30",
-  estado: "pendiente",
-  prioridad: "alta",
-  categoria: "torneos",
-  respuestas: [
-    {
-      id: 1,
-      autor: "Carlos Admin",
-      mensaje: `Hola Juan,
-
-Gracias por tu consulta sobre el torneo de primavera. Te respondo punto por punto:
-
-1. El handicap requerido es entre 0 y 36
-2. Sí, hay 15% de descuento para miembros con más de 3 torneos
-3. El almuerzo está incluido en el precio
-4. Cancelación gratuita hasta 48hs antes
-
-Para grupos de 4, podemos asegurar que jueguen juntos si se inscriben al mismo tiempo.
-
-¿Te gustaría que te reserve los cupos?
-
-Saludos,
-Carlos`,
-      fecha: "2024-01-15 14:20",
-      esAdmin: true,
-    },
-  ],
-  etiquetas: ["torneo", "grupo", "descuento"],
-}
-
-const getEstadoBadge = (estado: string) => {
-  switch (estado) {
-    case "pendiente":
-      return (
-        <Badge variant="destructive">
-          <Clock className="w-3 h-3 mr-1" />
-          Pendiente
-        </Badge>
-      )
-    case "en_proceso":
-      return (
-        <Badge variant="secondary">
-          <AlertCircle className="w-3 h-3 mr-1" />
-          En Proceso
-        </Badge>
-      )
-    case "respondida":
-      return (
-        <Badge variant="default">
-          <CheckCircle className="w-3 h-3 mr-1" />
-          Respondida
-        </Badge>
-      )
-    default:
-      return <Badge variant="outline">{estado}</Badge>
+  const handleSubmitResponse = async () => {
+    if (!response.trim()) return
+    setIsSubmitting(true)
+    try {
+      console.log('Adding response:', response)
+      setResponse('')
+      if (newStatus !== consultation?.status) {
+        console.log('Updating status to:', newStatus)
+      }
+    } finally {
+      setIsSubmitting(false)
+    }
   }
-}
 
-const getPrioridadColor = (prioridad: string) => {
-  switch (prioridad) {
-    case "alta":
-      return "border-l-red-500"
-    case "media":
-      return "border-l-yellow-500"
-    case "baja":
-      return "border-l-green-500"
-    default:
-      return "border-l-gray-300"
+  if (isLoading) {
+    return (
+      <div className="space-y-6">
+        <div className="h-8 w-48 bg-gray-200 rounded animate-pulse" />
+        <Card>
+          <CardContent className="p-6 space-y-4">
+            <div className="h-4 w-3/4 bg-gray-200 rounded animate-pulse" />
+            <div className="h-4 w-1/2 bg-gray-200 rounded animate-pulse" />
+            <div className="h-20 w-full bg-gray-200 rounded animate-pulse" />
+          </CardContent>
+        </Card>
+      </div>
+    )
   }
-}
 
-export default function DetalleConsultaPage({ params }: { params: { id: string } }) {
+  if (!consultation) {
+    return (
+      <div className="space-y-6">
+        <Button variant="ghost" asChild>
+          <Link href="/consultas">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Volver a Consultas
+          </Link>
+        </Button>
+        <Card>
+          <CardContent className="p-12 text-center">
+            <h3 className="text-lg font-semibold mb-2">Consulta no encontrada</h3>
+            <p className="text-muted-foreground">La consulta que buscas no existe o ha sido eliminada.</p>
+          </CardContent>
+        </Card>
+      </div>
+    )
+  }
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-4">
-        <Link href="/consultas">
-          <Button variant="outline" size="icon">
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-        </Link>
-        <div className="flex-1">
-          <h1 className="text-3xl font-bold text-foreground">Detalle de Consulta</h1>
-          <p className="text-muted-foreground">Información completa de la consulta</p>
-        </div>
-        <div className="flex gap-2">
-          <Button variant="outline">Marcar como Leída</Button>
-          <Link href={`/consultas/${params.id}/responder`}>
-            <Button>
-              <Reply className="h-4 w-4 mr-2" />
-              Responder
-            </Button>
+      <div className="flex items-center justify-between">
+        <Button variant="ghost" asChild>
+          <Link href="/consultas">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Volver a Consultas
           </Link>
+        </Button>
+        <div className="flex items-center gap-2">
+          <Badge variant={consultation.status === 'new' ? 'destructive' : 'secondary'}>
+            {consultation.status === 'new' ? 'Nueva' : consultation.status === 'in_progress' ? 'En Progreso' : 'Resuelta'}
+          </Badge>
+          <Badge variant="outline">{consultation.priority}</Badge>
         </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">
-        {/* Consulta Principal */}
         <div className="lg:col-span-2 space-y-6">
-          <Card className={`border-l-4 ${getPrioridadColor(consulta.prioridad)}`}>
+          <Card>
             <CardHeader>
-              <div className="flex items-start justify-between">
-                <div className="space-y-2">
-                  <CardTitle className="text-xl">{consulta.asunto}</CardTitle>
-                  <CardDescription>
-                    <div className="flex items-center gap-4">
-                      <span>De: {consulta.usuario.nombre}</span>
-                      <span>•</span>
-                      <span>{consulta.fechaCreacion}</span>
-                    </div>
-                  </CardDescription>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Badge variant="outline" className="capitalize">
-                    {consulta.categoria}
-                  </Badge>
-                  {getEstadoBadge(consulta.estado)}
-                </div>
-              </div>
+              <CardTitle>{consultation.subject}</CardTitle>
+              <CardDescription>
+                Consulta #{consultation.id} • {new Date(consultation.createdAt).toLocaleDateString()}
+              </CardDescription>
             </CardHeader>
-            <CardContent>
-              <div className="prose prose-sm max-w-none">
-                <pre className="whitespace-pre-wrap font-sans text-sm text-foreground">{consulta.mensaje}</pre>
+            <CardContent className="space-y-4">
+              <div className="prose max-w-none">
+                <p>{consultation.message}</p>
               </div>
-
-              {consulta.etiquetas.length > 0 && (
-                <div className="mt-4 pt-4 border-t">
-                  <div className="flex items-center gap-2">
-                    <span className="text-sm font-medium">Etiquetas:</span>
-                    {consulta.etiquetas.map((etiqueta, index) => (
-                      <Badge key={index} variant="outline" className="text-xs">
-                        {etiqueta}
-                      </Badge>
+              {consultation.attachments && consultation.attachments.length > 0 && (
+                <div>
+                  <h4 className="font-semibold mb-2">Archivos adjuntos</h4>
+                  <div className="space-y-2">
+                    {consultation.attachments.map((attachment, index) => (
+                      <div key={index} className="flex items-center gap-2 p-2 border rounded">
+                        <span className="text-sm">{attachment}</span>
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -172,48 +113,53 @@ export default function DetalleConsultaPage({ params }: { params: { id: string }
             </CardContent>
           </Card>
 
-          {/* Respuestas */}
-          {consulta.respuestas.length > 0 && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Respuestas ({consulta.respuestas.length})</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {consulta.respuestas.map((respuesta, index) => (
-                  <div key={respuesta.id}>
-                    <div className="flex items-start gap-3">
-                      <Avatar className="h-8 w-8">
-                        <AvatarFallback className="text-xs">
-                          {respuesta.autor
-                            .split(" ")
-                            .map((n) => n[0])
-                            .join("")}
-                        </AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 space-y-2">
-                        <div className="flex items-center gap-2">
-                          <span className="font-medium text-sm">{respuesta.autor}</span>
-                          {respuesta.esAdmin && (
-                            <Badge variant="outline" className="text-xs">
-                              Admin
-                            </Badge>
-                          )}
-                          <span className="text-xs text-muted-foreground">{respuesta.fecha}</span>
-                        </div>
-                        <div className="bg-muted p-3 rounded-lg">
-                          <pre className="whitespace-pre-wrap font-sans text-sm">{respuesta.mensaje}</pre>
-                        </div>
-                      </div>
+          <Card>
+            <CardHeader>
+              <CardTitle>Respuestas ({consultation.responses?.length || 0})</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {consultation.responses && consultation.responses.length > 0 ? (
+                consultation.responses.map((resp, index) => (
+                  <div key={index} className="border-l-4 border-emerald-500 pl-4 py-2">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="font-semibold">Administrador</span>
+                      <span className="text-sm text-muted-foreground">{new Date(resp.createdAt).toLocaleDateString()}</span>
                     </div>
-                    {index < consulta.respuestas.length - 1 && <Separator className="my-4" />}
+                    <p className="text-sm">{resp.message}</p>
                   </div>
-                ))}
-              </CardContent>
-            </Card>
-          )}
+                ))
+              ) : (
+                <p className="text-muted-foreground text-center py-4">Aún no hay respuestas para esta consulta.</p>
+              )}
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle>Agregar Respuesta</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Textarea placeholder="Escribe tu respuesta aquí..." value={response} onChange={e => setResponse(e.target.value)} rows={4} />
+              <div className="flex items-center justify-between">
+                <Select value={newStatus} onValueChange={(value: Consultation['status']) => setNewStatus(value)}>
+                  <SelectTrigger className="w-[200px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="new">Nueva</SelectItem>
+                    <SelectItem value="in_progress">En Progreso</SelectItem>
+                    <SelectItem value="resolved">Resuelta</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button onClick={handleSubmitResponse} disabled={!response.trim() || isSubmitting}>
+                  <Send className="mr-2 h-4 w-4" />
+                  {isSubmitting ? 'Enviando...' : 'Enviar Respuesta'}
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Información del Usuario */}
         <div className="space-y-6">
           <Card>
             <CardHeader>
@@ -221,78 +167,55 @@ export default function DetalleConsultaPage({ params }: { params: { id: string }
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="flex items-center gap-3">
-                <Avatar className="h-12 w-12">
-                  <AvatarImage src={consulta.usuario.avatar || "/placeholder.svg"} />
-                  <AvatarFallback>
-                    {consulta.usuario.nombre
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")}
-                  </AvatarFallback>
+                <Avatar>
+                  <AvatarImage src={consultation.user.avatar || '/placeholder.svg'} />
+                  <AvatarFallback>{consultation.user.name.split(' ').map(n => n[0]).join('')}</AvatarFallback>
                 </Avatar>
                 <div>
-                  <h3 className="font-medium">{consulta.usuario.nombre}</h3>
-                  <p className="text-sm text-muted-foreground">Usuario registrado</p>
+                  <p className="font-semibold">{consultation.user.name}</p>
+                  <p className="text-sm text-muted-foreground">{consultation.user.role}</p>
                 </div>
               </div>
-
-              <Separator />
-
-              <div className="space-y-3">
+              <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <Mail className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">{consulta.usuario.email}</span>
+                  <span className="text-sm">{consultation.user.email}</span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">{consulta.usuario.telefono}</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">Registrado: {consulta.usuario.fechaRegistro}</span>
-                </div>
+                {consultation.user.phone && (
+                  <div className="flex items-center gap-2">
+                    <Phone className="h-4 w-4 text-muted-foreground" />
+                    <span className="text-sm">{consultation.user.phone}</span>
+                  </div>
+                )}
                 <div className="flex items-center gap-2">
                   <User className="h-4 w-4 text-muted-foreground" />
-                  <span className="text-sm">{consulta.usuario.torneosParticipados} torneos participados</span>
+                  <span className="text-sm">Miembro desde {new Date(consultation.user.memberSince).toLocaleDateString()}</span>
                 </div>
-              </div>
-
-              <Separator />
-
-              <div className="space-y-2">
-                <Button variant="outline" className="w-full justify-start bg-transparent">
-                  <Mail className="h-4 w-4 mr-2" />
-                  Enviar Email
-                </Button>
-                <Button variant="outline" className="w-full justify-start bg-transparent">
-                  <Phone className="h-4 w-4 mr-2" />
-                  Llamar
-                </Button>
-                <Button variant="outline" className="w-full justify-start bg-transparent">
-                  <User className="h-4 w-4 mr-2" />
-                  Ver Perfil Completo
-                </Button>
               </div>
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader>
-              <CardTitle>Acciones Rápidas</CardTitle>
+              <CardTitle>Detalles de la Consulta</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-2">
-              <Button variant="outline" className="w-full justify-start bg-transparent">
-                <CheckCircle className="h-4 w-4 mr-2" />
-                Marcar como Resuelta
-              </Button>
-              <Button variant="outline" className="w-full justify-start bg-transparent">
-                <AlertCircle className="h-4 w-4 mr-2" />
-                Cambiar Prioridad
-              </Button>
-              <Button variant="outline" className="w-full justify-start bg-transparent">
-                <Reply className="h-4 w-4 mr-2" />
-                Reenviar a Especialista
-              </Button>
+            <CardContent className="space-y-3">
+              <div>
+                <span className="text-sm font-medium">Tipo:</span>
+                <Badge variant="outline" className="ml-2">{consultation.type}</Badge>
+              </div>
+              <div>
+                <span className="text-sm font-medium">Prioridad:</span>
+                <Badge variant="outline" className="ml-2">{consultation.priority}</Badge>
+              </div>
+              <div>
+                <span className="text-sm font-medium">Creada:</span>
+                <p className="text-sm text-muted-foreground">{new Date(consultation.createdAt).toLocaleString()}</p>
+              </div>
+              <div>
+                <span className="text-sm font-medium">Última actualización:</span>
+                <p className="text-sm text-muted-foreground">{new Date(consultation.updatedAt).toLocaleString()}</p>
+              </div>
             </CardContent>
           </Card>
         </div>

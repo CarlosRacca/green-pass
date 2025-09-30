@@ -7,6 +7,11 @@
     "start": "node server.js",
     "dev": "nodemon server.js",
     "seed": "node scripts/seed.cjs",
+    "ensure:users": "node scripts/ensureUsers.cjs",
+    "seed:full": "node scripts/seed_full.cjs",
+    "seed:large": "node scripts/seed_large.cjs",
+    "reset:full": "node scripts/reset.cjs",
+    "reset:large": "node scripts/reset_large.cjs",
     "test": "NODE_ENV=test node --test"
   },
   "dependencies": {

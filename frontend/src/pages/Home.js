@@ -4,6 +4,7 @@ import FeaturedExperiences from "../components/FeaturedExperiences.jsx";
 import HomeLoginCTA from "../components/HomeLoginCTA.jsx";
 import HeroVideoSection from "../components/HeroVideoSection.jsx";
 import AboutSection from "../components/AboutSection.jsx";
+// import HandicapLookup from "../components/HandicapLookup.jsx";
 
 function Home() {
   return (
@@ -13,6 +14,7 @@ function Home() {
       <AboutSection />
       <HomeHowItWorks />
       <HomeLoginCTA />
+      {/* <HandicapLookup /> */}
       <FloatingWhatsApp />
     </>
   );

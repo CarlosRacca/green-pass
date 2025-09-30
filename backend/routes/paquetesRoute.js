@@ -6,12 +6,12 @@ const router = express.Router();
 
 // Crear nuevo paquete
 router.post("/", async (req, res) => {
-  const { nombre, destino, precio, descripcion, fecha_inicio, fecha_fin } = req.body;
+  const { nombre, destino, precio, descripcion, puntos, duracion, imagen_url } = req.body;
   try {
     const result = await pool.query(
-      `INSERT INTO paquetes (nombre, destino, precio, descripcion, fecha_inicio, fecha_fin)
-       VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-      [nombre, destino, precio, descripcion, fecha_inicio, fecha_fin]
+      `INSERT INTO paquetes (nombre, destino, precio, descripcion, puntos, duracion, imagen_url)
+       VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *`,
+      [nombre, destino, precio, descripcion || null, puntos || 0, duracion || null, imagen_url || null]
     );
     res.status(201).json(result.rows[0]);
   } catch (err) {
@@ -42,6 +42,24 @@ router.get("/", async (req, res) => {
   }
 });
 
+// Paquetes asignados a un cliente
+router.get("/cliente/:user_id", async (req, res) => {
+  const { user_id } = req.params;
+  try {
+    const result = await pool.query(
+      `SELECT p.* FROM usuarios_paquetes up
+       JOIN paquetes p ON up.paquete_id = p.id
+       WHERE up.user_id = $1
+       ORDER BY p.id ASC`,
+      [user_id]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error al obtener paquetes del cliente:", err);
+    res.status(500).json({ error: "Error al obtener paquetes del cliente" });
+  }
+});
+
 // Obtener un paquete por ID
 router.get("/:id", async (req, res) => {
   try {
@@ -57,12 +75,12 @@ router.get("/:id", async (req, res) => {
 
 // Editar paquete
 router.put("/:id", async (req, res) => {
-  const { nombre, destino, precio, descripcion, fecha_inicio, fecha_fin } = req.body;
+  const { nombre, destino, precio, descripcion, puntos, duracion, imagen_url } = req.body;
   try {
     const result = await pool.query(
       `UPDATE paquetes SET nombre = $1, destino = $2, precio = $3, descripcion = $4,
-       fecha_inicio = $5, fecha_fin = $6 WHERE id = $7 RETURNING *`,
-      [nombre, destino, precio, descripcion, fecha_inicio, fecha_fin, req.params.id]
+       puntos = $5, duracion = $6, imagen_url = $7 WHERE id = $8 RETURNING *`,
+      [nombre, destino, precio, descripcion || null, puntos || 0, duracion || null, imagen_url || null, req.params.id]
     );
     res.json(result.rows[0]);
   } catch (err) {

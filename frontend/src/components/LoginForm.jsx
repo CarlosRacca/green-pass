@@ -19,8 +19,13 @@ const LoginForm = ({ onLoginSuccess }) => {
 
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      try {
+        document.cookie = `gp_auth=1; path=/`;
+        document.cookie = `gp_token=${data.token}; path=/`;
+        document.cookie = `gp_user=${encodeURIComponent(JSON.stringify({ id: data.user.id, email: data.user.email, role: data.user.role }))}; path=/`;
+      } catch {}
       onLoginSuccess(data.user);
-      navigate("/panel");
+      navigate("/admin-next");
     } catch (err) {
       setError("Error del servidor");
     }

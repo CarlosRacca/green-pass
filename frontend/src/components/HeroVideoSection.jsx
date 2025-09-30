@@ -1,7 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
+import { useTranslation } from 'react-i18next';
 
 export default function HeroVideoSection() {
+  const { t } = useTranslation();
   const sectionRef = useRef(null);
   const videoRef = useRef(null);
   const heroVideoUrl = process.env.REACT_APP_HERO_VIDEO_URL || "";
@@ -29,12 +31,9 @@ export default function HeroVideoSection() {
     return () => { cancelled = true; };
   }, []);
 
-  const getWeekIndex = () => {
-    const now = new Date();
-    const firstJan = new Date(now.getFullYear(), 0, 1);
-    const pastDays = Math.floor((now - firstJan) / 86400000);
-    const week = Math.floor((pastDays + firstJan.getDay() + 1) / 7); // aprox ISO week
-    return playlist.length > 0 ? (week % playlist.length) : 0;
+  const getHourIndex = () => {
+    const hoursSinceEpoch = Math.floor(Date.now() / 3600000);
+    return playlist.length > 0 ? (hoursSinceEpoch % playlist.length) : 0;
   };
 
   const [activeIsA, setActiveIsA] = useState(true);
@@ -45,7 +44,7 @@ export default function HeroVideoSection() {
   useEffect(() => {
     // reajustar índice cuando llegue playlist
     if (playlist.length > 0 && currentIndex === 0) {
-      setCurrentIndex(getWeekIndex());
+      setCurrentIndex(getHourIndex());
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [playlist.length]);
@@ -190,7 +189,7 @@ export default function HeroVideoSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.05 }}
           >
-            ¡Viví el golf como nunca antes!
+            {t('hero.headline')}
           </motion.h1>
           <motion.p
             className="text-light fs-5 mb-4"
@@ -200,7 +199,7 @@ export default function HeroVideoSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.6, delay: 0.15 }}
           >
-            Sumate a una experiencia exclusiva de golf, relax y naturaleza en los destinos más increíbles de Argentina.
+            {t('hero.sub')}
           </motion.p>
           {/* CTA removida por pedido: se mantiene limpio como referencia a vorrath */}
         </div>
